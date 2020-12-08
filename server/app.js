@@ -6,14 +6,10 @@ const logger = require("morgan")
 
 const indexRouter = require("./routes/index")
 const pingRouter = require("./routes/ping")
-const db = require("./models/dbconfig")
 
 const { json, urlencoded } = express
 
 //Test connection to the db
-db.authenticate()
-  .then(() => console.log("Postgres Connected!"))
-  .catch((err) => console.error(err))
 
 const usersRouter = require("./routes/users")
 

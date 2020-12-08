@@ -58,7 +58,7 @@ const Message = sequelize.define("Message", {
 
 User.sync()
   .then(() => {
-    console.log("User synced")
+    console.log("user synced")
     Session.sync()
       .then(() => {
         console.log("sessions synced")
