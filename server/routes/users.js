@@ -1,4 +1,3 @@
-const db = require("../models/dbconfig")
 const { User, Session, Message } = require("../models/models")
 const router = require("express").Router()
 
