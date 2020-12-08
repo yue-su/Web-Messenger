@@ -23,4 +23,8 @@
     "chai-http": "^4.3.0",
     "mocha": "^8.2.1"
   }
+  ,
+  "prettier":{
+    "semi": true
+  }
 }
