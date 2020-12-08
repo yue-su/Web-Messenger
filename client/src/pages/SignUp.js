@@ -1,9 +1,10 @@
-import { Box, TextField, Typography } from "@material-ui/core";
+import { Box, TextField, Typography, Link } from "@material-ui/core";
 import React, { useState } from "react";
 import SideBar from "../components/SideBar";
 import StyledButton from "../components/StyledButton";
+import { Link as RouterLink } from "react-router-dom";
 
-const initialState = { email: "", password: "" };
+const initialState = { username: "", email: "", password: "" };
 
 const SignUp = () => {
   const [state, setState] = useState(initialState);
@@ -15,7 +16,8 @@ const SignUp = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefalt();
+    e.preventDefault();
+    setState(initialState);
   };
 
   return (
@@ -32,7 +34,9 @@ const SignUp = () => {
           alignItems="center"
         >
           <Typography variant="body2">Already have an account?</Typography>
-          <StyledButton color="secondary" textColor="#3a8dff" text="Login" />
+          <Link to="/sign-in" component={RouterLink} underline="none">
+            <StyledButton color="secondary" textColor="#3a8dff" text="Login" />
+          </Link>
         </Box>
         <Box
           position="absolute"
@@ -46,10 +50,20 @@ const SignUp = () => {
           <Typography variant="h2">Create an account.</Typography>
           <TextField
             color="primary"
+            name="username"
+            value={state.username}
+            onChange={handleChange}
+            label="Username"
+            required
+          />
+          <TextField
+            color="primary"
             name="email"
             value={state.email}
             onChange={handleChange}
             label="Email address"
+            type="email"
+            required
           />
           <TextField
             color="primary"
@@ -58,6 +72,7 @@ const SignUp = () => {
             type="password"
             onChange={handleChange}
             label="Password"
+            required
           />
           <Box alignSelf="center">
             <StyledButton

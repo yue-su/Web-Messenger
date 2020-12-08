@@ -1,7 +1,8 @@
-import { Box, TextField, Typography } from "@material-ui/core";
+import { Box, TextField, Typography, Link } from "@material-ui/core";
 import React, { useState } from "react";
 import SideBar from "../components/SideBar";
 import StyledButton from "../components/StyledButton";
+import { Link as RouterLink } from "react-router-dom";
 
 const initialState = { email: "", password: "" };
 
@@ -15,7 +16,8 @@ const SignIn = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefalt();
+    e.preventDefault();
+    setState(initialState);
   };
 
   return (
@@ -32,11 +34,13 @@ const SignIn = () => {
           alignItems="center"
         >
           <Typography variant="body2">Don't have an account?</Typography>
-          <StyledButton
-            color="secondary"
-            textColor="#3a8dff"
-            text="Create account"
-          />
+          <Link to="/sign-up" component={RouterLink} underline="none">
+            <StyledButton
+              color="secondary"
+              textColor="#3a8dff"
+              text="Create account"
+            />
+          </Link>
         </Box>
         <Box
           position="absolute"
@@ -54,6 +58,8 @@ const SignIn = () => {
             value={state.email}
             onChange={handleChange}
             label="Email address"
+            required
+            type="email"
           />
           <TextField
             color="primary"
@@ -62,6 +68,7 @@ const SignIn = () => {
             type="password"
             onChange={handleChange}
             label="Password"
+            required
           />
           <Box alignSelf="center">
             <StyledButton
