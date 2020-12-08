@@ -9,8 +9,6 @@ const pingRouter = require("./routes/ping")
 
 const { json, urlencoded } = express
 
-//Test connection to the db
-
 const usersRouter = require("./routes/users")
 
 var app = express()
