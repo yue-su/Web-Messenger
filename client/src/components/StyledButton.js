@@ -8,7 +8,7 @@ const StyledButton = (props) => {
       color: props.textColor,
       fontSize: 14,
       fontWeight: 600,
-      width: 170,
+      width: 160,
       height: 56,
       textTransform: "none",
     },

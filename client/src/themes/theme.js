@@ -8,6 +8,14 @@ export const theme = createMuiTheme({
       fontSize: 26,
       // could customize the h1 variant as well
     },
+    h2: {
+      fontSize: 26,
+      fontWeight: 600,
+      // could customize the h1 variant as well
+    },
+    body1: {
+      fontWeight: 600,
+    },
     body2: {
       color: "#b0b0b0",
     },

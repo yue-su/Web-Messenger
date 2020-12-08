@@ -47,7 +47,7 @@ const SignIn = () => {
           flexDirection="column"
           justifyContent="space-between"
         >
-          <Typography variant="h1">Welcome Back!</Typography>
+          <Typography variant="h2">Welcome Back!</Typography>
           <TextField
             color="primary"
             name="email"
