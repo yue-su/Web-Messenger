@@ -1,6 +1,7 @@
 const { User, Session, Message } = require("../models/models")
 const router = require("express").Router()
 
+//a testing endpoint adding users without hashed password
 router.post("/register", (req, res) => {
   User.create(req.body)
     .then((user) => {
