@@ -13,11 +13,18 @@
     "express": "^4.17.1",
     "http-errors": "~1.8.0",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.6",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.3.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^8.2.1"
+  }
+  ,
+  "prettier":{
+    "semi": true
   }
 }

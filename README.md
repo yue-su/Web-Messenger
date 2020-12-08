@@ -1,7 +1,14 @@
-# Express Starter
+# Backend Setup
 
-This starter repo will be used for building applications using React, Material-UI, React-Router, Node, & Express.js.
+A Postgres server needs to be installed as well as pgAdmin for setting up the local environment.
 
-## Getting started
+A local env file is required to set up the connection to the database.
 
-The project is broken down into a client and server folder.
+env example:
+
+```
+DB_NAME=messenger
+DB_PASSWORD=Monday12
+DB_USERNAME=postgres
+DB_HOST=localhost
+```
