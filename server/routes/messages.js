@@ -6,8 +6,6 @@ const { message } = models;
 
 //send a new message and return its id
 router.post("/", restricted, (req, res) => {
-  console.log(req.body);
-
   message
     .create(req.body)
     .then((item) => {
