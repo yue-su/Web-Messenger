@@ -25,6 +25,7 @@ const modelDefiners = [
   require("./user.model"),
   require("./conversation.model"),
   require("./message.model"),
+  require("./userToConversation.model"),
 ];
 
 for (const modelDefiner of modelDefiners) {

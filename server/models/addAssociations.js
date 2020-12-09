@@ -1,8 +1,11 @@
 function addAssociations(sequelize) {
-  const { user, conversation, message } = sequelize.models;
+  const { user, conversation, message, userToConversation } = sequelize.models;
 
-  user.hasMany(conversation);
-  conversation.belongsTo(user);
+  user.hasMany(userToConversation);
+  userToConversation.belongsTo(user);
+
+  conversation.hasMany(userToConversation);
+  userToConversation.belongsTo(conversation);
 
   conversation.hasMany(message);
   message.belongsTo(conversation);

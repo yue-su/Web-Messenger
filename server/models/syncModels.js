@@ -1,5 +1,5 @@
 function syncModels(sequelize) {
-  const { user, conversation, message } = sequelize.models;
+  const { user, conversation, message, userToConversation } = sequelize.models;
 
   user
     .sync()
@@ -9,10 +9,16 @@ function syncModels(sequelize) {
         .sync()
         .then(() => {
           console.log("conversation synced");
-          message
+          userToConversation
             .sync()
             .then(() => {
-              console.log("message synced");
+              console.log("userToConversation synced");
+              message
+                .sync()
+                .then(() => {
+                  console.log("message synced");
+                })
+                .catch((err) => console.error(err));
             })
             .catch((err) => console.error(err));
         })
