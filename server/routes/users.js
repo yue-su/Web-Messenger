@@ -4,9 +4,36 @@ const bcryptjs = require("bcryptjs");
 
 const { isValid } = require("../utils/isValid");
 const { makeJwt } = require("../utils/makeJwt");
+const { restricted } = require("../middlewares/auth");
 
 const { user } = models;
 
+//return an array of users and the current logged in user
+router.get("/", restricted, (req, res) => {
+  user
+    .findAll()
+    .then((users) => {
+      res.status(200).json({ data: users, current_user: req.jwt });
+    })
+    .catch((err) => res.send(err));
+});
+
+//return a user by id
+router.get("/:id", restricted, (req, res) => {
+  user
+    .findOne({
+      where: {
+        id: req.params.id,
+      },
+    })
+    .then((user) => {
+      res.status(200).json({ data: user, current_user: req.jwt });
+    })
+    .catch((err) => res.send(err));
+});
+
+//return the registered user information with token
+//password is hashed
 router.post("/register", (req, res) => {
   const credentials = req.body;
 
@@ -31,6 +58,8 @@ router.post("/register", (req, res) => {
   }
 });
 
+//return the user data after logging in
+//A token is returned for future requests
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
 
