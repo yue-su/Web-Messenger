@@ -14,7 +14,9 @@ router.get("/", restricted, (req, res) => {
   user
     .findAll()
     .then((users) => {
-      res.status(200).json({ data: users, current_user: req.jwt });
+      res
+        .status(200)
+        .json({ data: users, current_user: req.currentUser.username });
     })
     .catch((err) => res.send(err));
 });
@@ -28,7 +30,9 @@ router.get("/:id", restricted, (req, res) => {
       },
     })
     .then((user) => {
-      res.status(200).json({ data: user, current_user: req.jwt });
+      res
+        .status(200)
+        .json({ data: user, current_user: req.currentUser.username });
     })
     .catch((err) => res.send(err));
 });
