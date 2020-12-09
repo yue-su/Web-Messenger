@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles(() => ({
   sideBar: {
     backgroundImage: `linear-gradient(rgba(58, 141, 255, 0.85), rgba(134, 185, 255, 0.85) ),url(${backgroundImage})`,
+    backgroundSize: "cover",
   },
 }));
 
