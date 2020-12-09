@@ -1,9 +1,7 @@
+//to check the user registration
 function isValid(user) {
   return Boolean(
-    user.username &&
-      user.password &&
-      user.email &&
-      typeof user.password === "string"
+    user.username && user.password && user.email && user.password.length > 6
   );
 }
 

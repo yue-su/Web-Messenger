@@ -9,6 +9,7 @@ const { restricted } = require("../middlewares/auth");
 const { user } = models;
 
 //return an array of users and the current logged in user
+//a middleware is placed to check the user's token
 router.get("/", restricted, (req, res) => {
   user
     .findAll()
@@ -34,6 +35,7 @@ router.get("/:id", restricted, (req, res) => {
 
 //return the registered user information with token
 //password is hashed
+//a validation is placed to check all the require input and password length
 router.post("/register", (req, res) => {
   const credentials = req.body;
 
@@ -53,7 +55,8 @@ router.post("/register", (req, res) => {
       });
   } else {
     res.status(400).json({
-      message: "username, password and email are required",
+      message:
+        "username, password and email are required, and password must be at least 6 charactors",
     });
   }
 });

@@ -6,7 +6,7 @@ function makeJwt(user) {
     username: user.username,
   };
 
-  const secret = "it is secret";
+  const secret = process.env.JWT_SECRET;
 
   const options = {
     expiresIn: "1h",
