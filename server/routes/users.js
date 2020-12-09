@@ -1,16 +1,69 @@
 const { models } = require("../models");
 const router = require("express").Router();
+const bcryptjs = require("bcryptjs");
 
-const { user, conversation, message } = models;
+const { isValid } = require("../utils/isValid");
+const { makeJwt } = require("../utils/makeJwt");
 
-//a testing endpoint adding users without hashed password
+const { user } = models;
+
 router.post("/register", (req, res) => {
-  user
-    .create(req.body)
-    .then((user) => {
-      res.status(201).json({ data: user });
-    })
-    .catch((error) => res.status(500).json({ message: error.message }));
+  const credentials = req.body;
+
+  if (isValid(credentials)) {
+    const rounds = process.env.HASH_ROUNDS || 4;
+    const hash = bcryptjs.hashSync(credentials.password, Number(rounds));
+    credentials.password = hash;
+
+    user
+      .create(credentials)
+      .then((user) => {
+        const token = makeJwt(user);
+        res.status(201).json({ data: user, token });
+      })
+      .catch((error) => {
+        res.status(500).json({ message: error.message });
+      });
+  } else {
+    res.status(400).json({
+      message: "username, password and email are required",
+    });
+  }
+});
+
+router.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+  if (Boolean(email && password)) {
+    user
+      .findOne({
+        where: {
+          email: email,
+        },
+      })
+      .then((user) => {
+        if (user && bcryptjs.compareSync(password, user.password)) {
+          const token = makeJwt(user);
+          res.status(200).json({
+            message: `welcome back ${user.username}`,
+            data: {
+              userId: user.id,
+              username: user.username,
+            },
+            token,
+          });
+        } else {
+          res.status(401).json({ message: "Invalid credentials" });
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({ message: error.message });
+      });
+  } else {
+    res.status(400).json({
+      message: "please provide username and password",
+    });
+  }
 });
 
 module.exports = router;
