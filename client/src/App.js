@@ -9,13 +9,11 @@ function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
-        <Box display="flex" justifyContent="center">
-          <Switch>
-            <Redirect exact from="/" to="/sign-in" />
-            <Route path="/sign-in" component={SignIn} />
-            <Route path="/sign-up" component={SignUp} />
-          </Switch>
-        </Box>
+        <Switch>
+          <Redirect exact from="/" to="/sign-in" />
+          <Route path="/sign-in" component={SignIn} />
+          <Route path="/sign-up" component={SignUp} />
+        </Switch>
       </BrowserRouter>
     </MuiThemeProvider>
   );
