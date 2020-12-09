@@ -1,4 +1,4 @@
-import { Box, Typography } from "@material-ui/core";
+import { Box, Grid, Hidden, Typography } from "@material-ui/core";
 import React from "react";
 import backgroundImage from "../images/bg-img.png";
 import chat from "../images/chat.svg";
@@ -14,33 +14,34 @@ const SideBar = () => {
   const classes = useStyles();
 
   return (
-    <Box
-      width="425px"
-      minHeight="700px"
-      className={classes.sideBar}
-      textAlign="center"
-      display="flex"
-      justifyContent="center"
-      position="relative"
-    >
-      <Box
-        position="absolute"
-        top="200px"
-        width="269px"
-        height="186px"
-        display="flex"
-        justifyContent="space-between"
-        flexDirection="column"
+    <Hidden smDown="true">
+      <Grid
+        item
+        container
+        className={classes.sideBar}
+        xs={0}
+        md={5}
+        justify="center"
       >
-        <img src={chat} alt="chat_logo" />
-        <Box height="80px" color="white">
-          <Typography variant="h1" gutterBottom>
-            Converse with anyone
-          </Typography>
-          <Typography variant="h1">with any language</Typography>
+        <Box
+          position="absolute"
+          top="200px"
+          width="269px"
+          height="186px"
+          display="flex"
+          justifyContent="space-between"
+          flexDirection="column"
+        >
+          <img src={chat} alt="chat_logo" />
+          <Box height="80px" color="white">
+            <Typography variant="h1" gutterBottom>
+              Converse with anyone
+            </Typography>
+            <Typography variant="h1">with any language</Typography>
+          </Box>
         </Box>
-      </Box>
-    </Box>
+      </Grid>
+    </Hidden>
   );
 };
 
