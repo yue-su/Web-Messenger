@@ -7,7 +7,11 @@ function restricted(req, res, next) {
   if (token) {
     jwt.verify(token, secret, (err, decodedToken) => {
       if (err) {
-        res.status(401).json({ you: "wrong token" });
+        res
+          .status(401)
+          .json({
+            you: "no access granted as the token is incorrect or expired",
+          });
       } else {
         req.jwt = decodedToken;
       }
