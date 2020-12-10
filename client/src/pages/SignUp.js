@@ -4,7 +4,6 @@ import SideBar from "../components/SideBar";
 import StyledButton from "../components/StyledButton";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { axiosWithAuth } from "../utils/axiosWithAuth";
 import { userContext } from "../providers/UsersProvider";
 
 const useStyles = makeStyles(() => ({
