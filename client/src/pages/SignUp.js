@@ -1,9 +1,10 @@
 import { Box, TextField, Typography, Link, Grid } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import SideBar from "../components/SideBar";
 import StyledButton from "../components/StyledButton";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
+import { userContext } from "../providers/UsersProvider";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -16,6 +17,10 @@ const initialState = { username: "", email: "", password: "" };
 const SignUp = () => {
   const classes = useStyles();
 
+  const history = useHistory();
+
+  const { register } = useContext(userContext);
+
   const [state, setState] = useState(initialState);
 
   const handleChange = (e) => {
@@ -26,6 +31,7 @@ const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    register(state, history);
     setState(initialState);
   };
 

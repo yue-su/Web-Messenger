@@ -13,6 +13,14 @@ export const theme = createMuiTheme({
       fontWeight: 600,
       // could customize the h1 variant as well
     },
+    h3: {
+      fontSize: 20,
+      fontWeight: 600,
+    },
+    h4: {
+      fontSize: 16,
+      fontWeight: 600,
+    },
     body1: {
       fontWeight: 600,
     },
