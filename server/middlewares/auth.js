@@ -4,6 +4,7 @@ function restricted(req, res, next) {
   //a token must be placed in the request head and will be checked with the same secret
   const token = req.headers.authorization;
   const secret = process.env.JWT_SECRET;
+
   if (token) {
     jwt.verify(token, secret, (err, decodedToken) => {
       if (err) {

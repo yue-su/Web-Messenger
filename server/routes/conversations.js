@@ -9,20 +9,20 @@ const { conversation, userToConversation } = models;
 router.post("/", restricted, (req, res) => {
   conversation
     .create()
-    .then((item) => {
+    .then((conversation) => {
       userToConversation
         .bulkCreate([
-          { conversationId: item.id, userId: req.body.userIdOne },
-          { conversationId: item.id, userId: req.body.userIdTwo },
+          { conversationId: conversation.id, userId: req.body.userIdOne },
+          { conversationId: conversation.id, userId: req.body.userIdTwo },
         ])
-        .then((item) => res.status(200).json({ data: item }));
+        .then((conversations) => res.status(200).json({ data: conversations }));
     })
     .catch((error) => res.status(400).json({ error: error }));
 });
 
 //get a list of coversation id by userId
-router.get("/user/:id", restricted, isCurrentUser, (req, res) => {
-  const id = req.params.id;
+router.get("/", restricted, isCurrentUser, (req, res) => {
+  const id = req.body.userId;
 
   userToConversation
     .findAll({

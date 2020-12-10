@@ -1,7 +1,5 @@
-const jwt = require("jsonwebtoken");
-
 function isCurrentUser(req, res, next) {
-  const requestId = req.params.id;
+  const requestId = req.body.userId;
   const currentUserId = req.currentUser.subject;
 
   if (requestId == currentUserId) {
