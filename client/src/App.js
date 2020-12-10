@@ -6,19 +6,22 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import PrivateRoute from "./components/PrivateRoute";
 import Chatroom from "./pages/Chatroom";
+import UsersProvider from "./providers/UsersProvider";
 
 function App() {
   return (
-    <MuiThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Switch>
-          <Redirect exact from="/" to="/sign-in" />
-          <Route path="/sign-in" component={SignIn} />
-          <Route path="/sign-up" component={SignUp} />
-          <PrivateRoute path="/chatroom" component={Chatroom} />
-        </Switch>
-      </BrowserRouter>
-    </MuiThemeProvider>
+    <UsersProvider>
+      <MuiThemeProvider theme={theme}>
+        <BrowserRouter>
+          <Switch>
+            <Redirect exact from="/" to="/sign-in" />
+            <Route path="/sign-in" component={SignIn} />
+            <Route path="/sign-up" component={SignUp} />
+            <PrivateRoute path="/chatroom" component={Chatroom} />
+          </Switch>
+        </BrowserRouter>
+      </MuiThemeProvider>
+    </UsersProvider>
   );
 }
 

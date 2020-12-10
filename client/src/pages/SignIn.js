@@ -1,10 +1,11 @@
 import { Box, TextField, Typography, Link, Grid } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import SideBar from "../components/SideBar";
 import StyledButton from "../components/StyledButton";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
+import { userContext } from "../providers/UsersProvider";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -17,6 +18,8 @@ const initialState = { email: "", password: "" };
 const SignIn = () => {
   const classes = useStyles();
   const history = useHistory();
+
+  const { setUser } = useContext(userContext);
   const [state, setState] = useState(initialState);
 
   const handleChange = (e) => {
@@ -31,6 +34,8 @@ const SignIn = () => {
       .post("/users/login", state)
       .then((res) => {
         localStorage.setItem("token", res.data.token);
+        console.log(res.data);
+        setUser(res.data.data);
         history.push(`/chatroom`);
       });
     setState(initialState);
