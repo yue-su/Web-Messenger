@@ -19,7 +19,7 @@ const SignIn = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const { setUser } = useContext(userContext);
+  const { login } = useContext(userContext);
   const [state, setState] = useState(initialState);
 
   const handleChange = (e) => {
@@ -30,14 +30,7 @@ const SignIn = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axiosWithAuth()
-      .post("/users/login", state)
-      .then((res) => {
-        localStorage.setItem("token", res.data.token);
-        console.log(res.data);
-        setUser(res.data.data);
-        history.push(`/chatroom`);
-      });
+    login(state, history);
     setState(initialState);
   };
 

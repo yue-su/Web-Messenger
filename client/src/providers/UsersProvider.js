@@ -7,6 +7,27 @@ const UsersProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userList, setUserList] = useState([]);
 
+  function login(state, history) {
+    axiosWithAuth()
+      .post("/users/login", state)
+      .then((res) => {
+        localStorage.setItem("token", res.data.token);
+        console.log(res.data);
+        setUser(res.data.data);
+        history.push(`/chatroom`);
+      });
+  }
+
+  function register(state, history) {
+    axiosWithAuth()
+      .post("/users/register", state)
+      .then((res) => {
+        localStorage.setItem("token", res.data.token);
+        setUser(res.data);
+        history.push(`/chatroom`);
+      });
+  }
+
   useEffect(() => {
     axiosWithAuth()
       .get("/users/")
@@ -17,7 +38,7 @@ const UsersProvider = ({ children }) => {
   }, [user]);
 
   return (
-    <userContext.Provider value={{ user, setUser, userList }}>
+    <userContext.Provider value={{ user, register, login, userList }}>
       {children}
     </userContext.Provider>
   );
