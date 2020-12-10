@@ -1,31 +1,38 @@
 const { models } = require("../models");
 const router = require("express").Router();
 const { restricted } = require("../middlewares/auth");
+const { isCurrentUser } = require("../middlewares/isCurrentUser");
 
-const { conversation } = models;
+const { conversation, userToConversation } = models;
 
-//start a new conversation and return its id
+//start a new conversation
 router.post("/", restricted, (req, res) => {
   conversation
-    .create(req.body)
-    .then((item) => {
-      res.status(201).json(item);
+    .create()
+    .then((conversation) => {
+      userToConversation
+        .bulkCreate([
+          { conversationId: conversation.id, userId: req.body.userIdOne },
+          { conversationId: conversation.id, userId: req.body.userIdTwo },
+        ])
+        .then((conversations) => res.status(200).json({ data: conversations }));
     })
     .catch((error) => res.status(400).json({ error: error }));
 });
 
-//get a list of coversation by userId
-router.get("/user/:id", restricted, (req, res) => {
-  const id = req.params.id;
+//get a list of coversation id by userId
+router.get("/", restricted, isCurrentUser, (req, res) => {
+  const id = req.body.userId;
 
-  conversation
+  userToConversation
     .findAll({
       where: {
         userId: id,
       },
+      order: [["createdAt", "DESC"]],
     })
-    .then((conversations) => {
-      res.status(200).json(conversations);
+    .then((item) => {
+      res.status(200).json(item);
     })
     .catch((error) => {
       res.status(500).json({ Message: error });
