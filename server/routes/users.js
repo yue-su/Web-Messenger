@@ -14,9 +14,7 @@ router.get("/", restricted, (req, res) => {
   user
     .findAll()
     .then((users) => {
-      res
-        .status(200)
-        .json({ data: users, current_user: req.currentUser.subject });
+      res.status(200).json({ data: users });
     })
     .catch((err) => res.send(err));
 });
@@ -30,9 +28,7 @@ router.get("/:id", restricted, (req, res) => {
       },
     })
     .then((user) => {
-      res
-        .status(200)
-        .json({ data: user, current_user: req.currentUser.subject });
+      res.status(200).json({ data: user });
     })
     .catch((err) => res.send(err));
 });
