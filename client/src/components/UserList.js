@@ -7,8 +7,8 @@ const UserList = () => {
   const { userList } = useContext(userContext);
   return (
     <Grid item container spacing={2}>
-      {userList.map((item) => (
-        <ConversationCard key={item.id} {...item} />
+      {userList.map((user) => (
+        <ConversationCard key={user.id} {...user} />
       ))}
     </Grid>
   );

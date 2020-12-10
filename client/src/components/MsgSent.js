@@ -17,6 +17,7 @@ const useStyles = makeStyles(() => ({
     borderBottomRightRadius: 8,
     padding: "8px 15px",
     marginTop: 5,
+    backgroundColor: "#3a8dff",
   },
 }));
 
@@ -28,7 +29,7 @@ const MsgSent = () => {
       <Avatar className={classes.avatar} />
       <Box ml={2}>
         <Typography variant="body2">santiage 10:55</Typography>
-        <Box bgcolor="#3a8dff" className={classes.message}>
+        <Box className={classes.message}>
           <Typography color="secondary">Where are you from</Typography>
         </Box>
       </Box>

@@ -18,6 +18,7 @@ const useStyles = makeStyles(() => ({
     padding: "8px 15px",
     marginTop: 5,
     color: "#91A3C0",
+    backgroundColor: "#F4F6FA",
   },
 }));
 
@@ -30,7 +31,7 @@ const MsgReceived = () => {
         <Typography variant="body2" align="right">
           santiage 10:55
         </Typography>
-        <Box bgcolor="#F4F6FA" className={classes.message}>
+        <Box className={classes.message}>
           <Typography>Share photo of your city, please</Typography>
         </Box>
       </Box>
