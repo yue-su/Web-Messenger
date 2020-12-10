@@ -29,6 +29,7 @@ router.get("/user/:id", restricted, isCurrentUser, (req, res) => {
       where: {
         userId: id,
       },
+      order: [["createdAt", "DESC"]],
     })
     .then((item) => {
       res.status(200).json(item);

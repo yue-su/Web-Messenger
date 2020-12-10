@@ -23,6 +23,7 @@ router.get("/conversation/:id", restricted, (req, res) => {
       where: {
         conversationId: id,
       },
+      order: [["createdAt", "ASC"]],
     })
     .then((messages) => {
       res.status(200).json(messages);
