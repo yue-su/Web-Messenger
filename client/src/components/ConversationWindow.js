@@ -65,10 +65,10 @@ const ConversationWindow = () => {
       </Grid>
       <Grid item className={classes.messageWindow}>
         {messages.map((message) => {
-          if (message.user.id === user.id) {
-            return <MsgReceived {...message} />;
+          if (message.user.id === user.userId) {
+            return <MsgSent key={message.id} {...message} />;
           } else {
-            return <MsgSent {...message} />;
+            return <MsgReceived key={message.id} {...message} />;
           }
         })}
       </Grid>

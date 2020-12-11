@@ -29,9 +29,11 @@ const ConversationCard = ({ conversationId }) => {
     axiosWithAuth()
       .get(`/conversations/${conversationId}`)
       .then((conversations) => {
-        const { photoURL, username } = conversations.data[0].user;
-        setAvatar(photoURL);
-        setUsername(username);
+        if (conversations.data[0]) {
+          const { photoURL, username } = conversations.data[0].user;
+          setAvatar(photoURL);
+          setUsername(username);
+        }
       });
   }, [conversationId]);
 
