@@ -2,10 +2,11 @@ const { models } = require("../models");
 const router = require("express").Router();
 const { restricted } = require("../middlewares/auth");
 
-const { message } = models;
+const { message, user } = models;
 
 //send a new message and return its id
 router.post("/", restricted, (req, res) => {
+  console.log(req.body);
   message
     .create(req.body)
     .then((item) => {
@@ -23,6 +24,7 @@ router.get("/conversation/:id", restricted, (req, res) => {
       where: {
         conversationId: id,
       },
+      include: [user],
       order: [["createdAt", "ASC"]],
     })
     .then((messages) => {
