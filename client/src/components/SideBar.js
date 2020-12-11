@@ -15,12 +15,12 @@ const SideBar = () => {
   const classes = useStyles();
 
   return (
-    <Hidden smDown="true">
+    <Hidden smDown={true}>
       <Grid
         item
         container
         className={classes.sideBar}
-        xs={0}
+        xs={false}
         md={5}
         justify="center"
       >

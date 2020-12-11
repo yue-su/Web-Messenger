@@ -1,5 +1,8 @@
 import React, { useState, useEffect, createContext } from "react";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
+import io from "socket.io-client";
+
+let socket;
 
 export const userContext = createContext();
 
@@ -12,13 +15,18 @@ const UsersProvider = ({ children }) => {
     conversationId: "",
   });
 
+  useEffect(() => {
+    socket = io("http://192.168.1.11:3001");
+  }, []);
+
   function login(state, history) {
     axiosWithAuth()
       .post("/users/login", state)
       .then((res) => {
         localStorage.setItem("token", res.data.token);
-
         setUser(res.data.data);
+
+        socket.emit("online", res.data.data);
 
         axiosWithAuth()
           .get(`/conversations/user/${res.data.data.userId}`)
@@ -49,7 +57,12 @@ const UsersProvider = ({ children }) => {
     });
   }
 
-  //useEffect(() => {}, [conversations]);
+  function renderMessage(message) {
+    setCurrentConversation({
+      ...currentConversation,
+      messages: [...currentConversation.messages, message],
+    });
+  }
 
   return (
     <userContext.Provider
@@ -59,7 +72,9 @@ const UsersProvider = ({ children }) => {
         login,
         conversations,
         currentConversation,
+        renderMessage,
         passMessages,
+        socket,
       }}
     >
       {children}

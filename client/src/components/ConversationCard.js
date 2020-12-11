@@ -17,15 +17,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const cardInitialValue = {
-  avatar: "",
-  username: "",
-  lastMessage: "",
-};
-
 const ConversationCard = ({ conversationId }) => {
   const classes = useStyles();
-  const [card, setCard] = useState(cardInitialValue);
+  const [avatar, setAvatar] = useState("");
+  const [username, setUsername] = useState("");
+  const [lastMessage, setLastMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const { passMessages } = useContext(userContext);
 
@@ -33,32 +29,30 @@ const ConversationCard = ({ conversationId }) => {
     axiosWithAuth()
       .get(`/conversations/${conversationId}`)
       .then((conversations) => {
-        const userTwo = conversations.data[0].user;
-        setCard({
-          ...card,
-          avatar: userTwo.photoURL,
-          username: userTwo.username,
-        });
+        const { photoURL, username } = conversations.data[0].user;
+        setAvatar(photoURL);
+        setUsername(username);
       });
-  }, []);
+  }, [conversationId]);
 
   useEffect(() => {
     axiosWithAuth()
       .get(`/messages/conversation/${conversationId}`)
       .then((messages) => {
         if (messages.data[0]) {
-          setCard({
-            ...card,
-            lastMessage: messages.data[0].content,
-          });
+          setLastMessage(messages.data[0].content);
         }
         setMessages(messages.data);
       });
-  }, []);
+  }, [conversationId]);
 
   const handleClick = () => {
-    passMessages(messages, card, conversationId);
-    console.log(messages);
+    const data = {
+      avatar: avatar,
+      username: username,
+      lastMessage: lastMessage,
+    };
+    passMessages(messages, data, conversationId);
   };
 
   return (
@@ -69,10 +63,10 @@ const ConversationCard = ({ conversationId }) => {
       alignItems="center"
       onClick={handleClick}
     >
-      <Avatar src={card.avatar} className={classes.avatar} />
+      <Avatar src={avatar} className={classes.avatar} />
       <Grid item className={classes.message}>
-        <Typography variant="body1">{card.username}</Typography>
-        <Typography variant="body2">{card.lastMessage}</Typography>
+        <Typography variant="body1">{username}</Typography>
+        <Typography variant="body2">{lastMessage}</Typography>
       </Grid>
     </Grid>
   );

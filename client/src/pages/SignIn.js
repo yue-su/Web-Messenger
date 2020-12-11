@@ -87,7 +87,7 @@ const SignIn = () => {
             />
             <Box alignSelf="center">
               <StyledButton
-                onClick={handleSubmit}
+                handler={handleSubmit}
                 text="Login"
                 textColor="#fff"
                 color="primary"

@@ -25,7 +25,9 @@ const useStyles = makeStyles(() => ({
 
 const ConversationWindow = () => {
   const classes = useStyles();
-  const { currentConversation, user } = useContext(userContext);
+  const { currentConversation, user, socket, renderMessage } = useContext(
+    userContext
+  );
   const { username, messages, conversationId } = currentConversation;
   const [state, setState] = useState("");
 
@@ -38,11 +40,12 @@ const ConversationWindow = () => {
       content: state,
     };
 
-    console.log(data);
+    socket.emit("sentMessage", data, () => {});
+
     axiosWithAuth()
       .post(`/messages`, data)
       .then((message) => {
-        console.log(message.data);
+        renderMessage(message.data);
       });
 
     setState("");
