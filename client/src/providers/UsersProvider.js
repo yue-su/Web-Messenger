@@ -9,14 +9,15 @@ export const userContext = createContext();
 const UsersProvider = ({ children }) => {
   const [user, setUser] = useState({ userId: "", username: "" });
   const [conversations, setConversations] = useState([]);
-  const [currentConversation, setCurrentConversation] = useState({
-    username: "",
-    messages: [],
-    conversationId: "",
-  });
+  const [currentTalkto, setCurrentTalkto] = useState("");
+  const [currentMessages, setCurrentMessages] = useState([]);
+  const [currentConversationId, setCurrentConversationId] = useState("");
 
   useEffect(() => {
     socket = io("http://192.168.1.11:3001");
+    socket.on("replyMessage", (message) => {
+      setCurrentMessages((currentMessages) => [...currentMessages, message]);
+    });
   }, []);
 
   function login(state, history) {
@@ -49,19 +50,14 @@ const UsersProvider = ({ children }) => {
       });
   }
 
-  function passMessages(messages, card, id) {
-    setCurrentConversation({
-      messages: messages,
-      username: card.username,
-      conversationId: id,
-    });
+  function passMessages(messages, data, id) {
+    setCurrentMessages(messages);
+    setCurrentTalkto(data.username);
+    setCurrentConversationId(id);
   }
 
   function renderMessage(message) {
-    setCurrentConversation({
-      ...currentConversation,
-      messages: [...currentConversation.messages, message],
-    });
+    setCurrentMessages([...currentMessages, message]);
   }
 
   return (
@@ -71,7 +67,9 @@ const UsersProvider = ({ children }) => {
         register,
         login,
         conversations,
-        currentConversation,
+        currentConversationId,
+        currentTalkto,
+        currentMessages,
         renderMessage,
         passMessages,
         socket,

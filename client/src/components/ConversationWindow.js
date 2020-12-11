@@ -13,6 +13,7 @@ const useStyles = makeStyles(() => ({
   },
   messageWindow: {
     flexGrow: 1,
+    overflowY: "scroll",
   },
   title: {
     padding: 25,
@@ -25,10 +26,15 @@ const useStyles = makeStyles(() => ({
 
 const ConversationWindow = () => {
   const classes = useStyles();
-  const { currentConversation, user, socket, renderMessage } = useContext(
-    userContext
-  );
-  const { username, messages, conversationId } = currentConversation;
+  const {
+    currentConversationId,
+    currentTalkto,
+    currentMessages,
+    user,
+    socket,
+    renderMessage,
+  } = useContext(userContext);
+
   const [state, setState] = useState("");
 
   const handleSubmit = (e) => {
@@ -36,16 +42,19 @@ const ConversationWindow = () => {
 
     const data = {
       userId: user.userId,
-      conversationId: conversationId,
+      conversationId: currentConversationId,
       content: state,
     };
-
-    socket.emit("sentMessage", data, () => {});
 
     axiosWithAuth()
       .post(`/messages`, data)
       .then((message) => {
-        renderMessage(message.data);
+        //renderMessage(message.data);
+
+        socket.emit("sentMessage", {
+          message: message.data,
+          userTo: currentTalkto,
+        });
       });
 
     setState("");
@@ -58,13 +67,15 @@ const ConversationWindow = () => {
       md={8}
       direction="column"
       className={classes.container}
+      wrap="nowrap"
     >
       <Grid item className={classes.title}>
-        <Typography variant="h3">{username}</Typography>
+        <Typography variant="h3">{currentTalkto}</Typography>
         <MoreHoriz />
       </Grid>
       <Grid item className={classes.messageWindow}>
-        {messages.map((message) => {
+        {currentMessages.map((message) => {
+          //console.log(message);
           if (message.user.id === user.userId) {
             return <MsgSent key={message.id} {...message} />;
           } else {
