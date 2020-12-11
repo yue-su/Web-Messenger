@@ -3,15 +3,15 @@ import React, { useContext } from "react";
 import { userContext } from "../providers/UsersProvider";
 import ConversationCard from "./ConversationCard";
 
-const UserList = () => {
-  const { userList } = useContext(userContext);
+const Conversations = () => {
+  const { conversations } = useContext(userContext);
   return (
     <Grid item container spacing={2}>
-      {userList.map((user) => (
-        <ConversationCard key={user.id} {...user} />
+      {conversations.map((conversation) => (
+        <ConversationCard key={conversation.conversationId} {...conversation} />
       ))}
     </Grid>
   );
 };
 
-export default UserList;
+export default Conversations;

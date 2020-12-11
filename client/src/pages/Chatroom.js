@@ -2,9 +2,9 @@ import { Grid } from "@material-ui/core";
 import React from "react";
 import SearchBar from "../components/SearchBar";
 import UserCard from "../components/UserCard";
-import UserList from "../components/UserList";
 import { makeStyles } from "@material-ui/core/styles";
 import ConversationWindow from "../components/ConversationWindow";
+import Conversations from "../components/Conversations";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -21,7 +21,7 @@ const Chatroom = () => {
       <Grid item container md={4} direction="column" spacing={1} wrap="nowrap">
         <UserCard />
         <SearchBar />
-        <UserList />
+        <Conversations />
       </Grid>
       <ConversationWindow />
     </Grid>

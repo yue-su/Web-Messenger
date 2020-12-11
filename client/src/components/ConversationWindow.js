@@ -1,9 +1,11 @@
 import { Grid, TextField, Typography } from "@material-ui/core";
-import React from "react";
+import React, { useContext, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import MoreHoriz from "@material-ui/icons/MoreHoriz";
 import MsgReceived from "./MsgReceived";
 import MsgSent from "./MsgSent";
+import { userContext } from "../providers/UsersProvider";
+import { axiosWithAuth } from "../utils/axiosWithAuth";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -23,6 +25,28 @@ const useStyles = makeStyles(() => ({
 
 const ConversationWindow = () => {
   const classes = useStyles();
+  const { currentConversation, user } = useContext(userContext);
+  const { username, messages, conversationId } = currentConversation;
+  const [state, setState] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const data = {
+      userId: user.userId,
+      conversationId: conversationId,
+      content: state,
+    };
+
+    console.log(data);
+    axiosWithAuth()
+      .post(`/messages`, data)
+      .then((message) => {
+        console.log(message.data);
+      });
+
+    setState("");
+  };
 
   return (
     <Grid
@@ -33,15 +57,27 @@ const ConversationWindow = () => {
       className={classes.container}
     >
       <Grid item className={classes.title}>
-        <Typography variant="h3">Santiago</Typography>
+        <Typography variant="h3">{username}</Typography>
         <MoreHoriz />
       </Grid>
       <Grid item className={classes.messageWindow}>
-        <MsgReceived />
-        <MsgSent />
+        {messages.map((message) => {
+          if (message.user.id === user.id) {
+            return <MsgReceived {...message} />;
+          } else {
+            return <MsgSent {...message} />;
+          }
+        })}
       </Grid>
       <Grid item>
-        <TextField fullWidth variant="outlined" />
+        <form onSubmit={handleSubmit}>
+          <TextField
+            value={state}
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setState(e.target.value)}
+          />
+        </form>
       </Grid>
     </Grid>
   );
