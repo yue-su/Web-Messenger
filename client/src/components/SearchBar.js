@@ -24,21 +24,38 @@ const SearchBar = () => {
   const classes = useStyles();
   const [state, setState] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  const { user } = useContext(userContext);
+  const { user, socket, conversations, renderMessages } = useContext(
+    userContext
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setState("");
   };
 
-  const handleClick = (id) => {
-    console.log(id);
-    axiosWithAuth()
-      .post(`/conversations`, { userIdOne: user.userId, userIdTwo: id })
-      .then((conversation) => {
-        console.log(conversation.data);
-        setState("");
-      });
+  const handleClick = (userTalkToId, userTalkToUsername) => {
+    console.log(userTalkToId);
+
+    if (conversations.find((item) => item.userId === userTalkToId)) {
+      console.log("````filter return true");
+      renderMessages(userTalkToId, userTalkToUsername);
+    } else {
+      console.log("filter return false");
+      axiosWithAuth()
+        .post(`/conversations`, {
+          userIdOne: user.userId,
+          userIdTwo: userTalkToId,
+        })
+        .then((conversation) => {
+          renderMessages(userTalkToId, userTalkToUsername);
+          console.log(conversation.data.data);
+          socket.emit("addConversation", {
+            data: conversation.data.data,
+            userTalkToUsername,
+          });
+        });
+      setState("");
+    }
   };
 
   useEffect(() => {
@@ -78,7 +95,7 @@ const SearchBar = () => {
               container
               alignItems="center"
               className={classes.user}
-              onClick={() => handleClick(user.id)}
+              onClick={() => handleClick(user.id, user.username)}
             >
               <Avatar src={user.photoURL}></Avatar>
               <Typography>{user.username}</Typography>

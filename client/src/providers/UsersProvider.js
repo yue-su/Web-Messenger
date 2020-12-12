@@ -15,8 +15,17 @@ const UsersProvider = ({ children }) => {
 
   useEffect(() => {
     socket = io("http://192.168.1.11:3001");
+
     socket.on("replyMessage", (message) => {
-      setCurrentMessages((currentMessages) => [...currentMessages, message]);
+      console.log(message);
+      setCurrentMessages((currentMessages) => {
+        return [...currentMessages, message];
+      });
+    });
+
+    socket.on("getConversation", (conversation) => {
+      console.log(conversation);
+      setConversations((conversations) => [...conversations, conversation]);
     });
   }, []);
 
@@ -45,7 +54,9 @@ const UsersProvider = ({ children }) => {
       .post("/users/register", state)
       .then((res) => {
         localStorage.setItem("token", res.data.token);
-        setUser(res.data);
+        setUser(res.data.data);
+
+        socket.emit("online", res.data.data);
         history.push(`/chatroom`);
       });
   }
@@ -60,6 +71,16 @@ const UsersProvider = ({ children }) => {
     setCurrentMessages([...currentMessages, message]);
   }
 
+  function renderMessages(userTalkToId, userTalkToUsername) {
+    axiosWithAuth()
+      .get(`/messages/conversation/${userTalkToId}`)
+      .then((messages) => {
+        setCurrentConversationId(userTalkToId);
+        setCurrentTalkto(userTalkToUsername);
+        setCurrentMessages(messages.data);
+      });
+  }
+
   return (
     <userContext.Provider
       value={{
@@ -72,6 +93,7 @@ const UsersProvider = ({ children }) => {
         currentMessages,
         renderMessage,
         passMessages,
+        renderMessages,
         socket,
       }}
     >
