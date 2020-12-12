@@ -6,11 +6,17 @@ const { message, user } = models;
 
 //send a new message and return its id
 router.post("/", restricted, (req, res) => {
-  console.log(req.body);
   message
     .create(req.body)
     .then((item) => {
-      res.status(201).json(item);
+      message
+        .findOne({
+          where: {
+            id: item.id,
+          },
+          include: [user],
+        })
+        .then((item) => res.status(201).json(item));
     })
     .catch((error) => res.status(400).json({ error: error }));
 });
