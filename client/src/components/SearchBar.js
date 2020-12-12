@@ -24,9 +24,7 @@ const SearchBar = () => {
   const classes = useStyles();
   const [state, setState] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  const { user, socket, conversations, renderMessages } = useContext(
-    userContext
-  );
+  const { user, socket, renderMessages, cleanChat } = useContext(userContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -34,27 +32,24 @@ const SearchBar = () => {
   };
 
   const handleClick = (userTalkToId, userTalkToUsername) => {
-    console.log(userTalkToId);
-
-    if (conversations.find((item) => item.userId === userTalkToId)) {
-      console.log("````filter return true");
-      renderMessages(userTalkToId, userTalkToUsername);
+    if (userTalkToId === user.userId) {
+      console.log("can't talk to your self");
     } else {
-      console.log("filter return false");
       axiosWithAuth()
         .post(`/conversations`, {
           userIdOne: user.userId,
           userIdTwo: userTalkToId,
         })
         .then((conversation) => {
-          renderMessages(userTalkToId, userTalkToUsername);
-          console.log(conversation.data.data);
+          const newConversationId = conversation.data.data[0].conversationId;
+          renderMessages(userTalkToId, userTalkToUsername, newConversationId);
           socket.emit("addConversation", {
             data: conversation.data.data,
             userTalkToUsername,
           });
         });
       setState("");
+      cleanChat();
     }
   };
 

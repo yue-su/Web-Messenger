@@ -12,6 +12,7 @@ const UsersProvider = ({ children }) => {
   const [currentTalkto, setCurrentTalkto] = useState("");
   const [currentMessages, setCurrentMessages] = useState([]);
   const [currentConversationId, setCurrentConversationId] = useState("");
+  const [incomingMsg, setIncomingMsg] = useState(null);
 
   const currentIdRef = useRef(currentConversationId);
   const currentUserRef = useRef(user.userId);
@@ -22,7 +23,11 @@ const UsersProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    socket = io("http://192.168.1.11:3001");
+    socket = io("http://192.168.1.11:3001", {
+      auth: {
+        token: "socketToken",
+      },
+    });
 
     socket.on("replyMessage", (message) => {
       if (message.conversationId === currentIdRef.current) {
@@ -30,12 +35,7 @@ const UsersProvider = ({ children }) => {
           return [...prevcurrentMessages, message];
         });
       } else {
-        axiosWithAuth()
-          .get(`/conversations/user/${currentUserRef.current}`)
-          .then((res) => {
-            setConversations(res.data);
-          })
-          .catch((error) => console.error(error));
+        setIncomingMsg(message);
       }
     });
 
@@ -43,6 +43,10 @@ const UsersProvider = ({ children }) => {
       setConversations((conversations) => [...conversations, conversation]);
     });
   }, []);
+
+  function cleanChat() {
+    setCurrentMessages([]);
+  }
 
   function login(state, history) {
     axiosWithAuth()
@@ -92,11 +96,11 @@ const UsersProvider = ({ children }) => {
     setCurrentMessages([...currentMessages, message]);
   }
 
-  function renderMessages(userTalkToId, userTalkToUsername) {
+  function renderMessages(userTalkToId, userTalkToUsername, newConversationId) {
     axiosWithAuth()
       .get(`/messages/conversation/${userTalkToId}`)
       .then((messages) => {
-        setCurrentConversationId(userTalkToId);
+        setCurrentConversationId(newConversationId);
         setCurrentTalkto(userTalkToUsername);
         setCurrentMessages(messages.data);
       });
@@ -108,6 +112,7 @@ const UsersProvider = ({ children }) => {
         user,
         register,
         login,
+        cleanChat,
         conversations,
         currentConversationId,
         currentTalkto,
@@ -116,6 +121,7 @@ const UsersProvider = ({ children }) => {
         passMessages,
         renderMessages,
         socket,
+        incomingMsg,
       }}
     >
       {children}

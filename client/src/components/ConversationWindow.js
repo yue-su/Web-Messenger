@@ -32,6 +32,7 @@ const ConversationWindow = () => {
     currentMessages,
     user,
     socket,
+    renderMessage,
   } = useContext(userContext);
 
   const [state, setState] = useState("");
@@ -44,10 +45,10 @@ const ConversationWindow = () => {
       conversationId: currentConversationId,
       content: state,
     };
-
     axiosWithAuth()
       .post(`/messages`, data)
       .then((message) => {
+        renderMessage(message.data);
         socket.emit("sentMessage", {
           message: message.data,
           userTo: currentTalkto,
