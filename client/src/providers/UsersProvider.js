@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext } from "react";
+import React, { useState, useEffect, createContext, useRef } from "react";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 import io from "socket.io-client";
 
@@ -13,18 +13,33 @@ const UsersProvider = ({ children }) => {
   const [currentMessages, setCurrentMessages] = useState([]);
   const [currentConversationId, setCurrentConversationId] = useState("");
 
+  const currentIdRef = useRef(currentConversationId);
+  const currentUserRef = useRef(user.userId);
+
+  useEffect(() => {
+    currentIdRef.current = currentConversationId;
+    currentUserRef.current = user.userId;
+  });
+
   useEffect(() => {
     socket = io("http://192.168.1.11:3001");
 
     socket.on("replyMessage", (message) => {
-      console.log(message);
-      setCurrentMessages((currentMessages) => {
-        return [...currentMessages, message];
-      });
+      if (message.conversationId === currentIdRef.current) {
+        setCurrentMessages((prevcurrentMessages) => {
+          return [...prevcurrentMessages, message];
+        });
+      } else {
+        axiosWithAuth()
+          .get(`/conversations/user/${currentUserRef.current}`)
+          .then((res) => {
+            setConversations(res.data);
+          })
+          .catch((error) => console.error(error));
+      }
     });
 
     socket.on("getConversation", (conversation) => {
-      console.log(conversation);
       setConversations((conversations) => [...conversations, conversation]);
     });
   }, []);
@@ -57,6 +72,12 @@ const UsersProvider = ({ children }) => {
         setUser(res.data.data);
 
         socket.emit("online", res.data.data);
+        axiosWithAuth()
+          .get(`/conversations/user/${res.data.data.userId}`)
+          .then((res) => {
+            setConversations(res.data);
+          })
+          .catch((error) => console.error(error));
         history.push(`/chatroom`);
       });
   }

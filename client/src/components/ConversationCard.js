@@ -23,7 +23,7 @@ const ConversationCard = ({ conversationId }) => {
   const [username, setUsername] = useState("");
   const [lastMessage, setLastMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const { passMessages } = useContext(userContext);
+  const { passMessages, conversations } = useContext(userContext);
 
   useEffect(() => {
     axiosWithAuth()
@@ -41,12 +41,12 @@ const ConversationCard = ({ conversationId }) => {
     axiosWithAuth()
       .get(`/messages/conversation/${conversationId}`)
       .then((messages) => {
-        if (messages.data[0]) {
-          setLastMessage(messages.data[0].content);
+        if (messages.data[messages.data.length - 1]) {
+          setLastMessage(messages.data[messages.data.length - 1].content);
         }
         setMessages(messages.data);
       });
-  }, [conversationId]);
+  }, [conversationId, conversations]);
 
   const handleClick = () => {
     const data = {
