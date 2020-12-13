@@ -22,7 +22,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const MsgReceived = ({ content, createdAt, user: { username } }) => {
+const MsgReceived = ({ content, createdAt, user: { username, photoURL } }) => {
   const classes = useStyles();
 
   return (
@@ -36,7 +36,7 @@ const MsgReceived = ({ content, createdAt, user: { username } }) => {
           <Typography>{content}</Typography>
         </Box>
       </Box>
-      <Avatar className={classes.avatar} />
+      <Avatar src={photoURL} className={classes.avatar} />
     </Box>
   );
 };

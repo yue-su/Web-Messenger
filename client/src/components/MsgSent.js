@@ -21,12 +21,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const MsgSent = ({ content, createdAt, user: { username } }) => {
+const MsgSent = ({ content, createdAt, user: { username, photoURL } }) => {
   const classes = useStyles();
 
   return (
     <Box display="flex" m={3}>
-      <Avatar className={classes.avatar} />
+      <Avatar src={photoURL} className={classes.avatar} />
       <Box ml={2}>
         <Typography variant="body2">
           {username}

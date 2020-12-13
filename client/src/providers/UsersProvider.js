@@ -1,6 +1,7 @@
 import React, { useState, useEffect, createContext, useRef } from "react";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 import io from "socket.io-client";
+import { getRandomAvatar } from "../utils/getRandomAvatar";
 
 let socket;
 
@@ -16,6 +17,7 @@ const currentChatReceiverInit = {
 const userInit = {
   userId: "",
   username: "",
+  photoURL: "",
 };
 
 const conversationsInit = [];
@@ -78,6 +80,7 @@ const UsersProvider = ({ children }) => {
         localStorage.setItem("token", res.data.token);
 
         setUser(res.data.data);
+        console.log(res.data.data);
 
         socket.emit("online", res.data.data);
 
@@ -94,13 +97,14 @@ const UsersProvider = ({ children }) => {
 
   function register(state, history) {
     axiosWithAuth()
-      .post("/users/register", state)
+      .post("/users/register", { ...state, photoURL: getRandomAvatar() })
       .then((res) => {
         localStorage.setItem("token", res.data.token);
 
         setUser({
           userId: res.data.data.id,
           username: res.data.data.username,
+          photoURL: res.data.data.photoURL,
         });
 
         socket.emit("online", res.data.data);
