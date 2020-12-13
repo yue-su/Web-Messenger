@@ -31,7 +31,7 @@ router.get("/conversation/:id", restricted, (req, res) => {
         conversationId: id,
       },
       include: [user],
-      order: [["createdAt", "ASC"]],
+      order: [["createdAt", "DESC"]],
     })
     .then((messages) => {
       res.status(200).json(messages);
