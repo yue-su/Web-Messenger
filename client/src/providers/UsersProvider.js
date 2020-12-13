@@ -6,19 +6,35 @@ let socket;
 
 export const userContext = createContext();
 
-const UsersProvider = ({ children }) => {
-  const [user, setUser] = useState({ userId: "", username: "" });
-  const [conversations, setConversations] = useState([]);
-  const [currentTalkto, setCurrentTalkto] = useState("");
-  const [currentMessages, setCurrentMessages] = useState([]);
-  const [currentConversationId, setCurrentConversationId] = useState("");
-  const [incomingMsg, setIncomingMsg] = useState(null);
+const currentChatReceiverInit = {
+  userId: "",
+  username: "",
+  messages: [],
+  conversationId: "",
+};
 
-  const currentIdRef = useRef(currentConversationId);
+const userInit = {
+  userId: "",
+  username: "",
+};
+
+const conversationsInit = [];
+
+const incomingMsgInit = null;
+
+const UsersProvider = ({ children }) => {
+  const [user, setUser] = useState(userInit);
+  const [conversations, setConversations] = useState(conversationsInit);
+  const [incomingMsg, setIncomingMsg] = useState(incomingMsgInit);
+  const [currentChatReceiver, setCurrentChatReceiver] = useState(
+    currentChatReceiverInit
+  );
+
+  const currentIdRef = useRef(currentChatReceiver.conversationId);
   const currentUserRef = useRef(user.userId);
 
   useEffect(() => {
-    currentIdRef.current = currentConversationId;
+    currentIdRef.current = currentChatReceiver.conversationId;
     currentUserRef.current = user.userId;
   });
 
@@ -31,8 +47,11 @@ const UsersProvider = ({ children }) => {
 
     socket.on("replyMessage", (message) => {
       if (message.conversationId === currentIdRef.current) {
-        setCurrentMessages((prevcurrentMessages) => {
-          return [...prevcurrentMessages, message];
+        setCurrentChatReceiver((currentChatReceiver) => {
+          return {
+            ...currentChatReceiver,
+            messages: [message, ...currentChatReceiver.messages],
+          };
         });
       } else {
         setIncomingMsg(message);
@@ -40,12 +59,16 @@ const UsersProvider = ({ children }) => {
     });
 
     socket.on("getConversation", (conversation) => {
-      setConversations((conversations) => [...conversations, conversation]);
+      console.log(conversation);
+      setConversations((conversations) => [conversation, ...conversations]);
     });
   }, []);
 
   function cleanChat() {
-    setCurrentMessages([]);
+    setCurrentChatReceiver({
+      ...currentChatReceiver,
+      messages: [],
+    });
   }
 
   function login(state, history) {
@@ -53,6 +76,7 @@ const UsersProvider = ({ children }) => {
       .post("/users/login", state)
       .then((res) => {
         localStorage.setItem("token", res.data.token);
+
         setUser(res.data.data);
 
         socket.emit("online", res.data.data);
@@ -73,11 +97,15 @@ const UsersProvider = ({ children }) => {
       .post("/users/register", state)
       .then((res) => {
         localStorage.setItem("token", res.data.token);
-        setUser(res.data.data);
+
+        setUser({
+          userId: res.data.data.id,
+          username: res.data.data.username,
+        });
 
         socket.emit("online", res.data.data);
         axiosWithAuth()
-          .get(`/conversations/user/${res.data.data.userId}`)
+          .get(`/conversations/user/${res.data.data.id}`)
           .then((res) => {
             setConversations(res.data);
           })
@@ -86,23 +114,32 @@ const UsersProvider = ({ children }) => {
       });
   }
 
-  function passMessages(messages, data, id) {
-    setCurrentMessages(messages);
-    setCurrentTalkto(data.username);
-    setCurrentConversationId(id);
+  function passMessages(messages, username, conversationId, userId) {
+    setCurrentChatReceiver({
+      messages: messages,
+      username: username,
+      conversationId: conversationId,
+      userId: userId,
+    });
   }
 
   function renderMessage(message) {
-    setCurrentMessages([...currentMessages, message]);
+    setCurrentChatReceiver({
+      ...currentChatReceiver,
+      messages: [message, ...currentChatReceiver.messages],
+    });
   }
 
   function renderMessages(userTalkToId, userTalkToUsername, newConversationId) {
     axiosWithAuth()
       .get(`/messages/conversation/${userTalkToId}`)
       .then((messages) => {
-        setCurrentConversationId(newConversationId);
-        setCurrentTalkto(userTalkToUsername);
-        setCurrentMessages(messages.data);
+        setCurrentChatReceiver({
+          userId: userTalkToId,
+          conversationId: newConversationId,
+          username: userTalkToUsername,
+          messages: messages.data,
+        });
       });
   }
 
@@ -114,9 +151,7 @@ const UsersProvider = ({ children }) => {
         login,
         cleanChat,
         conversations,
-        currentConversationId,
-        currentTalkto,
-        currentMessages,
+        currentChatReceiver,
         renderMessage,
         passMessages,
         renderMessages,

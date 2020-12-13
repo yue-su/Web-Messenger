@@ -14,6 +14,8 @@ const useStyles = makeStyles(() => ({
   messageWindow: {
     flexGrow: 1,
     overflowY: "scroll",
+    display: "flex",
+    flexDirection: "column-reverse",
   },
   title: {
     padding: 25,
@@ -26,14 +28,9 @@ const useStyles = makeStyles(() => ({
 
 const ConversationWindow = () => {
   const classes = useStyles();
-  const {
-    currentConversationId,
-    currentTalkto,
-    currentMessages,
-    user,
-    socket,
-    renderMessage,
-  } = useContext(userContext);
+  const { currentChatReceiver, user, socket, renderMessage } = useContext(
+    userContext
+  );
 
   const [state, setState] = useState("");
 
@@ -42,7 +39,7 @@ const ConversationWindow = () => {
 
     const data = {
       userId: user.userId,
-      conversationId: currentConversationId,
+      conversationId: currentChatReceiver.conversationId,
       content: state,
     };
     axiosWithAuth()
@@ -51,7 +48,7 @@ const ConversationWindow = () => {
         renderMessage(message.data);
         socket.emit("sentMessage", {
           message: message.data,
-          userTo: currentTalkto,
+          currentChatReceiverId: currentChatReceiver.userId,
         });
       });
 
@@ -68,12 +65,11 @@ const ConversationWindow = () => {
       wrap="nowrap"
     >
       <Grid item className={classes.title}>
-        <Typography variant="h3">{currentTalkto}</Typography>
+        <Typography variant="h3">{currentChatReceiver.username}</Typography>
         <MoreHoriz />
       </Grid>
       <Grid item className={classes.messageWindow}>
-        {currentMessages.map((message) => {
-          //console.log(message);
+        {currentChatReceiver.messages.map((message) => {
           if (message.user.id === user.userId) {
             return <MsgSent key={message.id} {...message} />;
           } else {

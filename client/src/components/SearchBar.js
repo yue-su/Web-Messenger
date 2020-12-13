@@ -31,21 +31,28 @@ const SearchBar = () => {
     setState("");
   };
 
-  const handleClick = (userTalkToId, userTalkToUsername) => {
-    if (userTalkToId === user.userId) {
+  const handleClick = (currentChatReceiverId, currentChatReceiverUsername) => {
+    //if user click himself, return an error
+    if (currentChatReceiverId === user.userId) {
       console.log("can't talk to your self");
     } else {
       axiosWithAuth()
         .post(`/conversations`, {
           userIdOne: user.userId,
-          userIdTwo: userTalkToId,
+          userIdTwo: currentChatReceiverId,
         })
         .then((conversation) => {
           const newConversationId = conversation.data.data[0].conversationId;
-          renderMessages(userTalkToId, userTalkToUsername, newConversationId);
+          renderMessages(
+            currentChatReceiverId,
+            currentChatReceiverUsername,
+            newConversationId
+          );
+
           socket.emit("addConversation", {
             data: conversation.data.data,
-            userTalkToUsername,
+            currentChatReceiverUsername,
+            currentChatReceiverId,
           });
         });
       setState("");

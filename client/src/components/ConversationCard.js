@@ -21,6 +21,7 @@ const ConversationCard = ({ conversationId }) => {
   const classes = useStyles();
   const [avatar, setAvatar] = useState("");
   const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState("");
   const [lastMessage, setLastMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const { passMessages, incomingMsg } = useContext(userContext);
@@ -30,9 +31,10 @@ const ConversationCard = ({ conversationId }) => {
       .get(`/conversations/${conversationId}`)
       .then((conversations) => {
         if (conversations.data[0]) {
-          const { photoURL, username } = conversations.data[0].user;
+          const { photoURL, username, id } = conversations.data[0].user;
           setAvatar(photoURL);
           setUsername(username);
+          setUserId(id);
         }
       });
   }, [conversationId]);
@@ -41,8 +43,8 @@ const ConversationCard = ({ conversationId }) => {
     axiosWithAuth()
       .get(`/messages/conversation/${conversationId}`)
       .then((messages) => {
-        if (messages.data[messages.data.length - 1]) {
-          setLastMessage(messages.data[messages.data.length - 1].content);
+        if (messages.data[0]) {
+          setLastMessage(messages.data[0].content);
         }
         setMessages(messages.data);
       });
@@ -50,24 +52,20 @@ const ConversationCard = ({ conversationId }) => {
 
   useEffect(() => {
     if (incomingMsg && incomingMsg.conversationId === conversationId) {
-      setMessages((messages) => [...messages, incomingMsg]);
+      setMessages((messages) => [incomingMsg, ...messages]);
       setLastMessage(incomingMsg.content);
     }
   }, [conversationId, incomingMsg]);
 
   const handleClick = () => {
-    const data = {
-      avatar: avatar,
-      username: username,
-      lastMessage: lastMessage,
-    };
-
     axiosWithAuth()
       .get(`/messages/conversation/${conversationId}`)
       .then((messages) => {
         setMessages(messages.data);
-        setLastMessage(messages.data[messages.data.length - 1].content);
-        passMessages(messages.data, data, conversationId);
+        passMessages(messages.data, username, conversationId, userId);
+        if (messages.data[0]) {
+          setLastMessage(messages.data[0].content);
+        }
       });
   };
 
