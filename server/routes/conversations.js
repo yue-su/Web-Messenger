@@ -49,6 +49,8 @@ router.get("/user/:id", restricted, isCurrentUser, (req, res) => {
     });
 });
 
+//this endpoint is to find out who is the current user are talking to.
+//it only return one item in the array, which is the receiver of the conversation.
 router.get("/:id", restricted, (req, res) => {
   const id = req.params.id;
   const currentUserId = req.currentUser.subject;
