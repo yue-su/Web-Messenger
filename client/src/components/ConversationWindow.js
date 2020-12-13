@@ -33,26 +33,31 @@ const ConversationWindow = () => {
   );
 
   const [state, setState] = useState("");
+  const [inputError, setInputError] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const data = {
-      userId: user.userId,
-      conversationId: currentChatReceiver.conversationId,
-      content: state,
-    };
-    axiosWithAuth()
-      .post(`/messages`, data)
-      .then((message) => {
-        renderMessage(message.data);
-        socket.emit("sentMessage", {
-          message: message.data,
-          currentChatReceiverId: currentChatReceiver.userId,
+    if (state) {
+      const data = {
+        userId: user.userId,
+        conversationId: currentChatReceiver.conversationId,
+        content: state,
+      };
+      axiosWithAuth()
+        .post(`/messages`, data)
+        .then((message) => {
+          renderMessage(message.data);
+          socket.emit("sentMessage", {
+            message: message.data,
+            currentChatReceiverId: currentChatReceiver.userId,
+          });
         });
-      });
 
-    setState("");
+      setState("");
+      setInputError(false);
+    } else {
+      setInputError(true);
+    }
   };
 
   return (
@@ -80,10 +85,12 @@ const ConversationWindow = () => {
       <Grid item>
         <form onSubmit={handleSubmit}>
           <TextField
+            label="Send a message"
             value={state}
             fullWidth
             variant="outlined"
             onChange={(e) => setState(e.target.value)}
+            error={inputError}
           />
         </form>
       </Grid>

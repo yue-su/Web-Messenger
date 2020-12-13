@@ -1,10 +1,22 @@
-import { Box, TextField, Typography, Link, Grid } from "@material-ui/core";
+import {
+  Box,
+  TextField,
+  Typography,
+  Link,
+  Grid,
+  Snackbar,
+} from "@material-ui/core";
 import React, { useContext, useState } from "react";
 import SideBar from "../components/SideBar";
 import StyledButton from "../components/StyledButton";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { userContext } from "../providers/UsersProvider";
+import MuiAlert from "@material-ui/lab/Alert";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -18,7 +30,7 @@ const SignIn = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const { login } = useContext(userContext);
+  const { login, errors } = useContext(userContext);
   const [state, setState] = useState(initialState);
 
   const handleChange = (e) => {
@@ -38,6 +50,9 @@ const SignIn = () => {
       <SideBar />
       <Grid item xs={12} md={7} container direction="column">
         <Grid item container justify="flex-end">
+          <Snackbar open={errors.login}>
+            <Alert severity="warning">Wrong username and password</Alert>
+          </Snackbar>
           <Box
             width="350px"
             display="flex"
