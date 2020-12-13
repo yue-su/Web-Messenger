@@ -133,7 +133,10 @@ const UsersProvider = ({ children }) => {
             photoURL: res.data.data.photoURL,
           });
 
-          socket.emit("online", res.data.data);
+          socket.emit("online", {
+            userId: res.data.data.id,
+            username: res.data.data.username,
+          });
           axiosWithAuth()
             .get(`/conversations/user/${res.data.data.id}`)
             .then((res) => {
