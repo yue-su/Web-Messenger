@@ -42,6 +42,7 @@ module.exports = (server) => {
     });
 
     socket.on("addConversation", (data) => {
+      console.log(data);
       const currentChatReceiverId = data.currentChatReceiverId;
 
       socket.emit("getConversation", data.data[0]);
