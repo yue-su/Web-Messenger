@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, useRef } from "react";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
-import io from "socket.io-client";
 import { getRandomAvatar } from "../utils/getRandomAvatar";
+import io from "socket.io-client";
 import useLocalStorage from "../hooks/useLocalStorage";
 
 let socket;
@@ -233,18 +233,18 @@ const UsersProvider = ({ children }) => {
   return (
     <userContext.Provider
       value={{
+        socket,
         user,
+        conversations,
+        currentChatReceiver,
+        incomingMsg,
+        errors,
         register,
         login,
         cleanChat,
-        conversations,
-        currentChatReceiver,
         renderMessage,
         passMessages,
         renderMessages,
-        socket,
-        incomingMsg,
-        errors,
       }}
     >
       {children}
