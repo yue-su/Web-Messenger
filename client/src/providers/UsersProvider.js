@@ -40,17 +40,10 @@ const errorsInit = {
  */
 
 const UsersProvider = ({ children }) => {
-  const [user, setUser] = useLocalStorage("user", userInit);
-  const [conversations, setConversations] = useLocalStorage(
-    "conversations",
-    conversationsInit
-  );
-  const [incomingMsg, setIncomingMsg] = useLocalStorage(
-    "incoming",
-    incomingMsgInit
-  );
-  const [currentChatReceiver, setCurrentChatReceiver] = useLocalStorage(
-    "current",
+  const [user, setUser] = useState(userInit);
+  const [conversations, setConversations] = useState(conversationsInit);
+  const [incomingMsg, setIncomingMsg] = useState(incomingMsgInit);
+  const [currentChatReceiver, setCurrentChatReceiver] = useState(
     currentChatReceiverInit
   );
 
@@ -65,6 +58,7 @@ const UsersProvider = ({ children }) => {
    * it can't reference any of the state's current value, that's why the currentIdRef took place.
    */
   const currentIdRef = useRef();
+
   useEffect(() => {
     currentIdRef.current = currentChatReceiver.conversationId;
   });
@@ -73,9 +67,11 @@ const UsersProvider = ({ children }) => {
    * socket client set up, the URL is pointing to the backend(on another server)
    */
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
     socket = io("http://192.168.1.11:3001", {
       auth: {
-        token: "socketToken",
+        token: token,
       },
     });
 
@@ -86,7 +82,12 @@ const UsersProvider = ({ children }) => {
      * if it's not a match, the message will be sent to a state called incomingMsg, the state is
      * passed to the conversationCard for further process.
      */
+
+    const online = socket.emit("online", user);
+
     socket.on("replyMessage", (message) => {
+      console.log("incoming msg");
+      console.log(message);
       if (message.conversationId === currentIdRef.current) {
         setCurrentChatReceiver((currentChatReceiver) => {
           return {
@@ -105,7 +106,20 @@ const UsersProvider = ({ children }) => {
     socket.on("getConversation", (conversation) => {
       setConversations((conversations) => [conversation, ...conversations]);
     });
-  }, []);
+
+    return online;
+  }, [user]);
+
+  useEffect(() => {
+    if (user.userId) {
+      axiosWithAuth()
+        .get(`/conversations/user/${user.userId}`)
+        .then((res) => {
+          setConversations(res.data);
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [user]);
 
   /**
    * this cleanChat function is used by the searchBar.
@@ -130,14 +144,6 @@ const UsersProvider = ({ children }) => {
       .then((res) => {
         localStorage.setItem("token", res.data.token);
         setUser(res.data.data);
-
-        socket.emit("online", res.data.data);
-        axiosWithAuth()
-          .get(`/conversations/user/${res.data.data.userId}`)
-          .then((res) => {
-            setConversations(res.data);
-          })
-          .catch((error) => console.error(error));
 
         history.push(`/chatroom`);
         setErrors({
@@ -166,11 +172,6 @@ const UsersProvider = ({ children }) => {
             userId: res.data.data.id,
             username: res.data.data.username,
             photoURL: res.data.data.photoURL,
-          });
-
-          socket.emit("online", {
-            userId: res.data.data.id,
-            username: res.data.data.username,
           });
           axiosWithAuth()
             .get(`/conversations/user/${res.data.data.id}`)
@@ -205,12 +206,12 @@ const UsersProvider = ({ children }) => {
   /**
    * When the user sent a message, it will render on the current chat window
    */
-  function renderMessage(message) {
-    setCurrentChatReceiver({
-      ...currentChatReceiver,
-      messages: [message, ...currentChatReceiver.messages],
-    });
-  }
+  // function renderMessage(message) {
+  //   setCurrentChatReceiver({
+  //     ...currentChatReceiver,
+  //     messages: [message, ...currentChatReceiver.messages],
+  //   });
+  // }
 
   /**
    * renderMessages is used by the searchBar
@@ -242,7 +243,6 @@ const UsersProvider = ({ children }) => {
         register,
         login,
         cleanChat,
-        renderMessage,
         passMessages,
         renderMessages,
       }}
