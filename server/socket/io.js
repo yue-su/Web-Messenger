@@ -2,7 +2,7 @@ const {
   userSocketIdMap,
   addUserToMap,
   removeUserFromMap,
-} = require("./userSocketIdMap");
+} = require("../utils/userSocketIdMap");
 
 module.exports = (server) => {
   //setup a socket server with cors
@@ -30,21 +30,21 @@ module.exports = (server) => {
     console.log("new socket connection");
 
     //when a user is connected, the userId and socketId will be added a in memory map
-    socket.on("online", (user) => {
-      console.log("online");
-      socket.userId = user.userId;
-      addUserToMap(user.userId, socket.id);
-    });
+    // socket.on("online", (user) => {
+    //   console.log("online");
+    //   socket.userId = user.userId;
+    //   addUserToMap(user.userId, socket.id);
+    // });
 
-    //when received a message, check if the receiver is online, then forward the msg to the receiver if it's true.
-    socket.on("sentMessage", (data) => {
-      const { message, currentChatReceiverId } = data;
-      if (userSocketIdMap.has(currentChatReceiverId)) {
-        socket
-          .to(userSocketIdMap.get(currentChatReceiverId))
-          .emit("replyMessage", message);
-      }
-    });
+    // //when received a message, check if the receiver is online, then forward the msg to the receiver if it's true.
+    // socket.on("sentMessage", (data) => {
+    //   const { message, currentChatReceiverId } = data;
+    //   if (userSocketIdMap.has(currentChatReceiverId)) {
+    //     socket
+    //       .to(userSocketIdMap.get(currentChatReceiverId))
+    //       .emit("replyMessage", message);
+    //   }
+    // });
 
     //This event is to license if the user initiate a new conversation. check the online users and then forward the conversation to the receiver.
     socket.on("addConversation", (data) => {
@@ -60,8 +60,8 @@ module.exports = (server) => {
     });
 
     //delete the user from the map when it's offline
-    socket.on("disconnect", () => {
-      removeUserFromMap(socket.userId);
-    });
+    // socket.on("disconnect", () => {
+    //   removeUserFromMap(socket.userId);
+    // });
   });
 };

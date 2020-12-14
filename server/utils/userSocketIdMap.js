@@ -1,7 +1,7 @@
 const userSocketIdMap = new Map();
 
 function addUserToMap(userId, socketId) {
-  if (!userSocketIdMap.has(userId)) {
+  if (!userSocketIdMap.has(userId) && userId) {
     userSocketIdMap.set(userId, socketId);
   }
 }

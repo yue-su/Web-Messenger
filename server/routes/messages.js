@@ -1,44 +1,88 @@
 const { models } = require("../models");
 const router = require("express").Router();
-const { restricted } = require("../middlewares/auth");
+const { restricted, socketAuth } = require("../middlewares/auth");
+
+const {
+  userSocketIdMap,
+  addUserToMap,
+  removeUserFromMap,
+} = require("../utils/userSocketIdMap");
 
 const { message, user } = models;
 
-//send a new message and return its id
-router.post("/", restricted, (req, res) => {
-  message
-    .create(req.body)
-    .then((item) => {
-      message
-        .findOne({
-          where: {
-            id: item.id,
-          },
-          include: [user],
-        })
-        .then((item) => res.status(201).json(item));
-    })
-    .catch((error) => res.status(400).json({ error: error }));
-});
+module.exports = function (io) {
+  io.use(socketAuth);
 
-//get a list of messages by conversation id
-router.get("/conversation/:id", restricted, (req, res) => {
-  const id = req.params.id;
+  io.on("connection", (socket) => {
+    console.log("new socket connection");
 
-  message
-    .findAll({
-      where: {
-        conversationId: id,
-      },
-      include: [user],
-      order: [["createdAt", "DESC"]],
-    })
-    .then((messages) => {
-      res.status(200).json(messages);
-    })
-    .catch((error) => {
-      res.status(500).json({ Message: error });
+    //when a user is connected, the userId and socketId will be added a in memory map
+    socket.on("online", (user) => {
+      socket.userId = user.userId;
+      addUserToMap(user.userId, socket.id);
+      console.log(userSocketIdMap);
     });
-});
 
-module.exports = router;
+    //delete the user from the map when it's offline
+    socket.on("disconnect", () => {
+      removeUserFromMap(socket.userId);
+      console.log(userSocketIdMap);
+    });
+  });
+  //send a new message and return its id
+  router.post("/", restricted, (req, res) => {
+    console.log(req.body);
+    message
+      .create(req.body)
+      .then((item) => {
+        message
+          .findOne({
+            where: {
+              id: item.id,
+            },
+            include: [user],
+          })
+          .then((message) => {
+            if (userSocketIdMap.has(req.body.currentChatReceiverId)) {
+              io.to(userSocketIdMap.get(req.body.currentChatReceiverId)).emit(
+                "replyMessage",
+                message
+              );
+              io.to(userSocketIdMap.get(req.body.userId)).emit(
+                "replyMessage",
+                message
+              );
+            } else {
+              io.to(userSocketIdMap.get(req.body.userId)).emit(
+                "replyMessage",
+                message
+              );
+            }
+            res.status(201).json(message);
+          });
+      })
+      .catch((error) => res.status(400).json({ error: error }));
+  });
+
+  //get a list of messages by conversation id
+  router.get("/conversation/:id", restricted, (req, res) => {
+    const id = req.params.id;
+
+    message
+      .findAll({
+        where: {
+          conversationId: id,
+        },
+        include: [user],
+        order: [["createdAt", "DESC"]],
+      })
+      .then((messages) => {
+        res.status(200).json(messages);
+      })
+      .catch((error) => {
+        res.status(500).json({ Message: error });
+      });
+  });
+
+  return router;
+};

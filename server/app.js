@@ -1,20 +1,37 @@
+require("dotenv").config();
+
+var http = require("http");
 const createError = require("http-errors");
-const express = require("express");
-const { join } = require("path");
 const cookieParser = require("cookie-parser");
+const { join } = require("path");
 const logger = require("morgan");
 const cors = require("cors");
+const express = require("express");
+const { json, urlencoded } = express;
+const app = express();
+const { onError, normalizePort } = require("./utils/server");
+
+var port = normalizePort(process.env.PORT || "3001");
+app.set("port", port);
+
+const server = http.createServer(app);
+server.listen(port);
+server.on("error", onError);
+server.on("listening", onListening);
+
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
 
-const { json, urlencoded } = express;
-
 const usersRouter = require("./routes/users");
 const conversationsRouter = require("./routes/conversations");
-const messageRouter = require("./routes/messages");
-
-var app = express();
+const messageRouter = require("./routes/messages")(io);
 
 app.use(cors());
 app.use(logger("dev"));
@@ -45,4 +62,9 @@ app.use(function (err, req, res, next) {
   res.json({ error: err });
 });
 
-module.exports = app;
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+
+  console.log("Listening on " + bind);
+}

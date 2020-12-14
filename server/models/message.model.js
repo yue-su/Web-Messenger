@@ -6,5 +6,9 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    currentChatReceiverId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   });
 };
