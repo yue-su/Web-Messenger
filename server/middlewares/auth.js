@@ -26,8 +26,10 @@ function socketAuth(socket, next) {
   const secret = process.env.JWT_SECRET;
 
   if (socket.handshake.auth && token) {
-    jwt.verify(token, secret, function (err, decoded) {
-      if (err) return next(new Error("Authentication error"));
+    jwt.verify(token, secret, (err, decoded) => {
+      if (err) {
+        return next(new Error("Authentication error"));
+      }
       socket.decoded = decoded;
       next();
     });

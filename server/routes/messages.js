@@ -2,33 +2,11 @@ const { models } = require("../models");
 const router = require("express").Router();
 const { restricted, socketAuth } = require("../middlewares/auth");
 
-const {
-  userSocketIdMap,
-  addUserToMap,
-  removeUserFromMap,
-} = require("../utils/userSocketIdMap");
+const { userSocketIdMap } = require("../utils/userSocketIdMap");
 
 const { message, user } = models;
 
 module.exports = function (io) {
-  io.use(socketAuth);
-
-  io.on("connection", (socket) => {
-    console.log("new socket connection");
-
-    //when a user is connected, the userId and socketId will be added a in memory map
-    socket.on("online", (user) => {
-      socket.userId = user.userId;
-      addUserToMap(user.userId, socket.id);
-      console.log(userSocketIdMap);
-    });
-
-    //delete the user from the map when it's offline
-    socket.on("disconnect", () => {
-      removeUserFromMap(socket.userId);
-      console.log(userSocketIdMap);
-    });
-  });
   //send a new message and return its id
   router.post("/", restricted, (req, res) => {
     console.log(req.body);
