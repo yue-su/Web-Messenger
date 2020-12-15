@@ -9,7 +9,6 @@ const { message, user } = models;
 module.exports = function (io) {
   //send a new message and return its id
   router.post("/", restricted, (req, res) => {
-    console.log(req.body);
     message
       .create(req.body)
       .then((item) => {
@@ -23,15 +22,6 @@ module.exports = function (io) {
           .then((message) => {
             if (userSocketIdMap.has(req.body.currentChatReceiverId)) {
               io.to(userSocketIdMap.get(req.body.currentChatReceiverId)).emit(
-                "replyMessage",
-                message
-              );
-              io.to(userSocketIdMap.get(req.body.userId)).emit(
-                "replyMessage",
-                message
-              );
-            } else {
-              io.to(userSocketIdMap.get(req.body.userId)).emit(
                 "replyMessage",
                 message
               );

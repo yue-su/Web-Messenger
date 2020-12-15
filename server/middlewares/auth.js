@@ -30,7 +30,7 @@ function socketAuth(socket, next) {
       if (err) {
         return next(new Error("Authentication error"));
       }
-      socket.decoded = decoded;
+      socket.currentUser = decoded;
       next();
     });
   } else {
