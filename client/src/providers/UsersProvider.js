@@ -120,10 +120,6 @@ const UsersProvider = ({ children }) => {
     }
   }, [user]);
 
-  function createNewConversation(conversation) {
-    setConversations([conversation, ...conversations]);
-  }
-
   /**
    * login and register function takes care of the user state,
    * they also emit a user online message to the socket server.
@@ -195,6 +191,11 @@ const UsersProvider = ({ children }) => {
     });
   }
 
+  /*Used by searchBar when the user created a new conversation */
+  function createNewConversation(conversation) {
+    setConversations([conversation, ...conversations]);
+  }
+
   /**
    * When the user sent a message, it will render on the current chat window
    */
@@ -203,24 +204,6 @@ const UsersProvider = ({ children }) => {
       ...currentChatReceiver,
       messages: [message, ...currentChatReceiver.messages],
     });
-  }
-
-  /**
-   * renderMessages is used by the searchBar
-   * when a new conversation is setup
-   * this one needs a refactor as the axios call seems not necessary.
-   */
-  function renderMessages(userTalkToId, userTalkToUsername, newConversationId) {
-    axiosWithAuth()
-      .get(`/messages/conversation/${userTalkToId}`)
-      .then((messages) => {
-        setCurrentChatReceiver({
-          userId: userTalkToId,
-          conversationId: newConversationId,
-          username: userTalkToUsername,
-          messages: messages.data,
-        });
-      });
   }
 
   return (
@@ -235,7 +218,6 @@ const UsersProvider = ({ children }) => {
         register,
         login,
         passMessages,
-        renderMessages,
         renderMessage,
         createNewConversation,
       }}
