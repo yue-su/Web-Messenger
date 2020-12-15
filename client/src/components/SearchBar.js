@@ -24,31 +24,29 @@ const SearchBar = () => {
   const classes = useStyles();
   const [state, setState] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  const { user, renderMessages, cleanChat } = useContext(userContext);
+  const { user, createNewConversation } = useContext(userContext);
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setState("");
   };
 
-  const handleClick = (currentChatReceiverId, currentChatReceiverUsername) => {
+  const handleClick = (currentChatReceiverId) => {
     //if user click himself, return an error
     if (currentChatReceiverId === user.userId) {
-      console.log("can't talk to your self");
+      setError("can't talk to your self");
     } else {
-      console.log(user.userId);
-      console.log(currentChatReceiverId);
-
       axiosWithAuth()
         .post(`/conversations`, {
-          userIdOne: user.userId,
-          userIdTwo: currentChatReceiverId,
+          senderId: user.userId,
+          receiverId: currentChatReceiverId,
         })
         .then((res) => {
-          console.log(res.data.message);
+          createNewConversation(res.data[0]);
         });
       setState("");
-      cleanChat();
+      setError("");
     }
   };
 
@@ -77,6 +75,7 @@ const SearchBar = () => {
           onChange={(e) => setState(e.target.value)}
           variant="outlined"
           value={state}
+          helperText={error}
           fullWidth
         />
       </form>
@@ -89,7 +88,7 @@ const SearchBar = () => {
               container
               alignItems="center"
               className={classes.user}
-              onClick={() => handleClick(user.id, user.username)}
+              onClick={() => handleClick(user.id)}
             >
               <Avatar src={user.photoURL}></Avatar>
               <Typography>{user.username}</Typography>

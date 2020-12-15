@@ -24,8 +24,11 @@ const ConversationCard = ({ conversationId }) => {
   const [userId, setUserId] = useState("");
   const [lastMessage, setLastMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const { passMessages, incomingMsg } = useContext(userContext);
+  const { passMessages, incomingMsg, conversations } = useContext(userContext);
 
+  /**
+   * get the receiver's information including avatar, username and id.
+   */
   useEffect(() => {
     axiosWithAuth()
       .get(`/conversations/${conversationId}`)
@@ -37,8 +40,11 @@ const ConversationCard = ({ conversationId }) => {
           setUserId(id);
         }
       });
-  }, [conversationId]);
+  }, [conversationId, conversations]);
 
+  /**
+   * Get all the messages and render the last one on the card
+   */
   useEffect(() => {
     axiosWithAuth()
       .get(`/messages/conversation/${conversationId}`)
@@ -50,6 +56,10 @@ const ConversationCard = ({ conversationId }) => {
       });
   }, [conversationId]);
 
+  /**
+   * handle incoming messages from socket server and compare with the conversationID
+   * if it's matched, add to the messages
+   */
   useEffect(() => {
     if (incomingMsg && incomingMsg.conversationId === conversationId) {
       setMessages((messages) => [incomingMsg, ...messages]);
@@ -57,6 +67,10 @@ const ConversationCard = ({ conversationId }) => {
     }
   }, [conversationId, incomingMsg]);
 
+  /**
+   * when the user click the card, it passes the message to the conversationWindow
+   * here I called the API again just trying to sync messages from the server
+   */
   const handleClick = () => {
     axiosWithAuth()
       .get(`/messages/conversation/${conversationId}`)

@@ -101,7 +101,9 @@ const UsersProvider = ({ children }) => {
      * the getConversation event is checking if another user started a new conversation with the current user
      */
     socket.on("sendConversation", (conversation) => {
-      setConversations((conversations) => [conversation, ...conversations]);
+      if (!conversations.find((item) => item.id === conversation.id)) {
+        setConversations((conversations) => [conversation, ...conversations]);
+      }
     });
 
     return online;
@@ -118,15 +120,8 @@ const UsersProvider = ({ children }) => {
     }
   }, [user]);
 
-  /**
-   * this cleanChat function is used by the searchBar.
-   * when the user start a new conversation, it will set the current chat window with an empty array.
-   */
-  function cleanChat() {
-    setCurrentChatReceiver({
-      ...currentChatReceiver,
-      messages: [],
-    });
+  function createNewConversation(conversation) {
+    setConversations([conversation, ...conversations]);
   }
 
   /**
@@ -239,10 +234,10 @@ const UsersProvider = ({ children }) => {
         errors,
         register,
         login,
-        cleanChat,
         passMessages,
         renderMessages,
         renderMessage,
+        createNewConversation,
       }}
     >
       {children}
