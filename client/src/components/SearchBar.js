@@ -24,7 +24,7 @@ const SearchBar = () => {
   const classes = useStyles();
   const [state, setState] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  const { user, socket, renderMessages, cleanChat } = useContext(userContext);
+  const { user, renderMessages, cleanChat } = useContext(userContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,24 +36,16 @@ const SearchBar = () => {
     if (currentChatReceiverId === user.userId) {
       console.log("can't talk to your self");
     } else {
+      console.log(user.userId);
+      console.log(currentChatReceiverId);
+
       axiosWithAuth()
         .post(`/conversations`, {
           userIdOne: user.userId,
           userIdTwo: currentChatReceiverId,
         })
-        .then((conversation) => {
-          const newConversationId = conversation.data.data[0].conversationId;
-          renderMessages(
-            currentChatReceiverId,
-            currentChatReceiverUsername,
-            newConversationId
-          );
-
-          socket.emit("addConversation", {
-            data: conversation.data.data,
-            currentChatReceiverUsername,
-            currentChatReceiverId,
-          });
+        .then((res) => {
+          console.log(res.data.message);
         });
       setState("");
       cleanChat();

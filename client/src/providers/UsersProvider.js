@@ -103,7 +103,8 @@ const UsersProvider = ({ children }) => {
     /**
      * the getConversation event is checking if another user started a new conversation with the current user
      */
-    socket.on("getConversation", (conversation) => {
+    socket.on("sendConversation", (conversation) => {
+      console.log(conversation);
       setConversations((conversations) => [conversation, ...conversations]);
     });
 
