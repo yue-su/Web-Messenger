@@ -1,6 +1,6 @@
 const { models } = require("../models");
 const router = require("express").Router();
-const { restricted, socketAuth } = require("../middlewares/auth");
+const { restricted } = require("../middlewares/auth");
 
 const { userSocketIdMap } = require("../utils/userSocketIdMap");
 
