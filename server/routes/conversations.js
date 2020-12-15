@@ -16,30 +16,23 @@ module.exports = function (io) {
           .bulkCreate([
             {
               conversationId: conversation.id,
-              userId: req.body.userIdOne,
-              username: req.body.usernameOne,
+              userId: req.body.senderId,
+              username: req.body.senderId,
             },
             {
               conversationId: conversation.id,
-              userId: req.body.userIdTwo,
-              username: req.body.usernameTwo,
+              userId: req.body.receiverId,
+              username: req.body.receiverId,
             },
           ])
           .then((conversations) => {
-            if (
-              userSocketIdMap.has(req.body.userIdOne) ||
-              userSocketIdMap.has(req.body.userIdTwo)
-            ) {
-              io.to(userSocketIdMap.get(req.body.userIdOne)).emit(
-                "sendConversation",
-                conversations[0]
-              );
-              io.to(userSocketIdMap.get(req.body.userIdTwo)).emit(
+            if (userSocketIdMap.has(req.body.receiverId)) {
+              io.to(userSocketIdMap.get(req.body.receiverId)).emit(
                 "sendConversation",
                 conversations[1]
               );
             }
-            res.status(200).json({ message: "success" });
+            res.status(200).json(conversations);
           })
           .catch((err) => console.err(err));
       })
