@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
 
 const ConversationWindow = () => {
   const classes = useStyles();
-  const { currentChatReceiver, user } = useContext(userContext);
+  const { currentChatReceiver, user, renderMessage } = useContext(userContext);
 
   const [state, setState] = useState("");
   const [inputError, setInputError] = useState(false);
@@ -42,12 +42,10 @@ const ConversationWindow = () => {
         content: state,
         currentChatReceiverId: currentChatReceiver.userId,
       };
-      console.log(data);
       axiosWithAuth()
         .post(`/messages`, data)
         .then((message) => {
-          //console.log(message.data);
-          //renderMessage(message.data);
+          renderMessage(message.data);
         });
 
       setState("");

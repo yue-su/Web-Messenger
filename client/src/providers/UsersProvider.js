@@ -2,7 +2,6 @@ import React, { useState, useEffect, createContext, useRef } from "react";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 import { getRandomAvatar } from "../utils/getRandomAvatar";
 import io from "socket.io-client";
-import useLocalStorage from "../hooks/useLocalStorage";
 
 let socket;
 
@@ -86,8 +85,6 @@ const UsersProvider = ({ children }) => {
     const online = socket.emit("online", user);
 
     socket.on("replyMessage", (message) => {
-      console.log("incoming msg");
-      console.log(message);
       if (message.conversationId === currentIdRef.current) {
         setCurrentChatReceiver((currentChatReceiver) => {
           return {
@@ -104,7 +101,6 @@ const UsersProvider = ({ children }) => {
      * the getConversation event is checking if another user started a new conversation with the current user
      */
     socket.on("sendConversation", (conversation) => {
-      console.log(conversation);
       setConversations((conversations) => [conversation, ...conversations]);
     });
 
@@ -207,12 +203,12 @@ const UsersProvider = ({ children }) => {
   /**
    * When the user sent a message, it will render on the current chat window
    */
-  // function renderMessage(message) {
-  //   setCurrentChatReceiver({
-  //     ...currentChatReceiver,
-  //     messages: [message, ...currentChatReceiver.messages],
-  //   });
-  // }
+  function renderMessage(message) {
+    setCurrentChatReceiver({
+      ...currentChatReceiver,
+      messages: [message, ...currentChatReceiver.messages],
+    });
+  }
 
   /**
    * renderMessages is used by the searchBar
@@ -246,6 +242,7 @@ const UsersProvider = ({ children }) => {
         cleanChat,
         passMessages,
         renderMessages,
+        renderMessage,
       }}
     >
       {children}
