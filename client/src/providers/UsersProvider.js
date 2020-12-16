@@ -68,7 +68,7 @@ const UsersProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    socket = io("http://192.168.1.11:3001", {
+    socket = io("http://127.0.0.1:3001", {
       auth: {
         token: token,
       },
@@ -94,15 +94,6 @@ const UsersProvider = ({ children }) => {
         });
       } else {
         setIncomingMsg(message);
-      }
-    });
-
-    /**
-     * the getConversation event is checking if another user started a new conversation with the current user
-     */
-    socket.on("sendConversation", (conversation) => {
-      if (!conversations.find((item) => item.id === conversation.id)) {
-        setConversations((conversations) => [conversation, ...conversations]);
       }
     });
 

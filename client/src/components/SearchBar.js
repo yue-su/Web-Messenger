@@ -41,9 +41,13 @@ const SearchBar = () => {
         .post(`/conversations`, {
           senderId: user.userId,
           receiverId: currentChatReceiverId,
+          users: `${user.userId}to${currentChatReceiverId}`,
         })
         .then((res) => {
           createNewConversation(res.data[0]);
+        })
+        .catch((err) => {
+          console.error(err);
         });
       setState("");
       setError("");

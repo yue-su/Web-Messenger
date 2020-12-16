@@ -10,7 +10,7 @@ const { conversation, userToConversation, user } = models;
 module.exports = function (io) {
   router.post("/", restricted, (req, res) => {
     conversation
-      .create()
+      .create({ users: req.body.users })
       .then((conversation) => {
         userToConversation
           .bulkCreate([
@@ -26,12 +26,6 @@ module.exports = function (io) {
             },
           ])
           .then((conversations) => {
-            if (userSocketIdMap.has(req.body.receiverId)) {
-              io.to(userSocketIdMap.get(req.body.receiverId)).emit(
-                "sendConversation",
-                conversations[1]
-              );
-            }
             res.status(200).json(conversations);
           })
           .catch((err) => console.err(err));
@@ -48,7 +42,6 @@ module.exports = function (io) {
         where: {
           userId: id,
         },
-        include: [user],
         order: [["createdAt", "DESC"]],
       })
       .then((item) => {
