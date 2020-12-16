@@ -1,39 +1,3 @@
-#!/usr/bin/env node
-
-/* Sets up the environment variables from your .env file*/
-require("dotenv").config();
-
-/**
- * Module dependencies.
- */
-
-var app = require("../app");
-var http = require("http");
-
-/**
- * Get port from environment and store in Express.
- */
-
-var port = normalizePort(process.env.PORT || "3001");
-app.set("port", port);
-
-/**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
-
-var io = app.io
-io.attach( server );
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on("error", onError);
-server.on("listening", onListening);
-
 /**
  * Normalize a port into a number, string, or false.
  */
@@ -84,9 +48,7 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-
-  console.log("Listening on " + bind);
-}
+module.exports = {
+  normalizePort,
+  onError,
+};

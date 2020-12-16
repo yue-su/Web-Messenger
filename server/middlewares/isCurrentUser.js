@@ -1,5 +1,5 @@
 function isCurrentUser(req, res, next) {
-  const requestId = req.body.userId;
+  const requestId = req.params.id;
   const currentUserId = req.currentUser.subject;
 
   if (requestId == currentUserId) {

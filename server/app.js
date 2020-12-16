@@ -1,20 +1,45 @@
 const createError = require("http-errors");
-const express = require("express");
-const { join } = require("path");
 const cookieParser = require("cookie-parser");
+const { join } = require("path");
 const logger = require("morgan");
+const cors = require("cors");
+const express = require("express");
+const { json, urlencoded } = express;
+const app = express();
+
+const { socketAuth } = require("./middlewares/auth");
+const { addUserToMap, removeUserFromMap } = require("./utils/userSocketIdMap");
+
+const io = require("socket.io")({
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+app.io = io;
+
+io.use(socketAuth);
+
+io.on("connection", (socket) => {
+  //when a user is connected, the userId and socketId will be added a in memory map
+  socket.on("online", (user) => {
+    socket.userId = user.userId;
+    addUserToMap(user.userId, socket.id);
+  });
+
+  //delete the user from the map when it's offline
+  socket.on("disconnect", () => {
+    removeUserFromMap(socket.userId);
+  });
+});
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
-
-const { json, urlencoded } = express;
-
 const usersRouter = require("./routes/users");
-const conversationsRouter = require("./routes/conversations");
-const messageRouter = require("./routes/messages");
+const conversationsRouter = require("./routes/conversations")(io);
+const messageRouter = require("./routes/messages")(io);
 
-var app = express();
-
+app.use(cors());
 app.use(logger("dev"));
 app.use(json());
 app.use(urlencoded({ extended: false }));

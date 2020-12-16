@@ -21,4 +21,21 @@ function restricted(req, res, next) {
   }
 }
 
-module.exports = { restricted };
+function socketAuth(socket, next) {
+  const token = socket.handshake.auth.token;
+  const secret = process.env.JWT_SECRET;
+
+  if (socket.handshake.auth && token) {
+    jwt.verify(token, secret, (err, decoded) => {
+      if (err) {
+        return next(new Error("Authentication error"));
+      }
+      socket.currentUser = decoded;
+      next();
+    });
+  } else {
+    next(new Error("Authentication error"));
+  }
+}
+
+module.exports = { restricted, socketAuth };

@@ -81,6 +81,7 @@ router.post("/login", (req, res) => {
             data: {
               userId: user.id,
               username: user.username,
+              photoURL: user.photoURL,
             },
             token,
           });
