@@ -6,17 +6,14 @@ import {
   Grid,
   Snackbar,
 } from "@material-ui/core";
-import MuiAlert from "@material-ui/lab/Alert";
+
 import React, { useContext, useState } from "react";
 import SideBar from "../components/SideBar";
 import StyledButton from "../components/StyledButton";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { userContext } from "../providers/UsersProvider";
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles(() => ({
   container: {
