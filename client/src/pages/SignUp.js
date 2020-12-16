@@ -1,10 +1,22 @@
-import { Box, TextField, Typography, Link, Grid } from "@material-ui/core";
+import {
+  Box,
+  TextField,
+  Typography,
+  Link,
+  Grid,
+  Snackbar,
+} from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
 import React, { useContext, useState } from "react";
 import SideBar from "../components/SideBar";
 import StyledButton from "../components/StyledButton";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { userContext } from "../providers/UsersProvider";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -19,7 +31,7 @@ const SignUp = () => {
 
   const history = useHistory();
 
-  const { register } = useContext(userContext);
+  const { register, errors } = useContext(userContext);
 
   const [state, setState] = useState(initialState);
 
@@ -40,6 +52,11 @@ const SignUp = () => {
       <SideBar />
       <Grid item xs={12} md={7} container direction="column">
         <Grid item container justify="flex-end">
+          <Snackbar open={errors.register}>
+            <Alert severity="warning">
+              username, email and password is required
+            </Alert>
+          </Snackbar>
           <Box
             width="350px"
             display="flex"
@@ -97,7 +114,7 @@ const SignUp = () => {
             />
             <Box alignSelf="center">
               <StyledButton
-                onClick={handleSubmit}
+                handler={handleSubmit}
                 text="Create"
                 textColor="#fff"
                 color="primary"

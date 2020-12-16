@@ -1,9 +1,11 @@
 import { Grid, TextField, Typography } from "@material-ui/core";
-import React from "react";
+import React, { useContext, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import MoreHoriz from "@material-ui/icons/MoreHoriz";
 import MsgReceived from "./MsgReceived";
 import MsgSent from "./MsgSent";
+import { userContext } from "../providers/UsersProvider";
+import { axiosWithAuth } from "../utils/axiosWithAuth";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -11,6 +13,9 @@ const useStyles = makeStyles(() => ({
   },
   messageWindow: {
     flexGrow: 1,
+    overflowY: "scroll",
+    display: "flex",
+    flexDirection: "column-reverse",
   },
   title: {
     padding: 25,
@@ -23,6 +28,32 @@ const useStyles = makeStyles(() => ({
 
 const ConversationWindow = () => {
   const classes = useStyles();
+  const { currentChatReceiver, user, renderMessage } = useContext(userContext);
+
+  const [state, setState] = useState("");
+  const [inputError, setInputError] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (state) {
+      const data = {
+        userId: user.userId,
+        conversationId: currentChatReceiver.conversationId,
+        content: state,
+        currentChatReceiverId: currentChatReceiver.userId,
+      };
+      axiosWithAuth()
+        .post(`/messages`, data)
+        .then((message) => {
+          renderMessage(message.data);
+        });
+
+      setState("");
+      setInputError(false);
+    } else {
+      setInputError(true);
+    }
+  };
 
   return (
     <Grid
@@ -31,17 +62,32 @@ const ConversationWindow = () => {
       md={8}
       direction="column"
       className={classes.container}
+      wrap="nowrap"
     >
       <Grid item className={classes.title}>
-        <Typography variant="h3">Santiago</Typography>
+        <Typography variant="h3">{currentChatReceiver.username}</Typography>
         <MoreHoriz />
       </Grid>
       <Grid item className={classes.messageWindow}>
-        <MsgReceived />
-        <MsgSent />
+        {currentChatReceiver.messages.map((message) => {
+          if (message.user.id === user.userId) {
+            return <MsgSent key={message.id} {...message} />;
+          } else {
+            return <MsgReceived key={message.id} {...message} />;
+          }
+        })}
       </Grid>
       <Grid item>
-        <TextField fullWidth variant="outlined" />
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Send a message"
+            value={state}
+            fullWidth
+            variant="outlined"
+            onChange={(e) => setState(e.target.value)}
+            error={inputError}
+          />
+        </form>
       </Grid>
     </Grid>
   );

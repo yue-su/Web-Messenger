@@ -17,7 +17,12 @@ const StyledButton = (props) => {
   const classes = useStyles();
 
   return (
-    <Button {...props} variant="contained" className={classes.button}>
+    <Button
+      onClick={props.handler}
+      color={props.color}
+      variant="contained"
+      className={classes.button}
+    >
       {props.text}
     </Button>
   );
