@@ -1,8 +1,15 @@
-import { Avatar, Grid, TextField, Typography } from "@material-ui/core";
+import {
+  Avatar,
+  Grid,
+  Snackbar,
+  TextField,
+  Typography,
+} from "@material-ui/core";
 import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 import { userContext } from "../providers/UsersProvider";
+import Alert from "./Alert";
 
 const useStyles = makeStyles(() => ({
   search: {
@@ -20,12 +27,17 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const errorInit = {
+  duplicate: false,
+  sameId: false,
+};
+
 const SearchBar = () => {
   const classes = useStyles();
   const [state, setState] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const { user, createNewConversation } = useContext(userContext);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(errorInit);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,22 +47,22 @@ const SearchBar = () => {
   const handleClick = (currentChatReceiverId) => {
     //if user click himself, return an error
     if (currentChatReceiverId === user.userId) {
-      setError("can't talk to your self");
+      setError({ ...error, sameId: true });
     } else {
       axiosWithAuth()
         .post(`/conversations`, {
           senderId: user.userId,
           receiverId: currentChatReceiverId,
-          users: `${user.userId}to${currentChatReceiverId}`,
+          users: `${user.userID},${currentChatReceiverId}`,
         })
         .then((res) => {
           createNewConversation(res.data[0]);
         })
         .catch((err) => {
-          console.error(err);
+          setError({ ...error, duplicate: true });
         });
       setState("");
-      setError("");
+      setError(errorInit);
     }
   };
 
@@ -74,12 +86,21 @@ const SearchBar = () => {
       <Typography variant="h2" paragraph>
         Chats
       </Typography>
+      <Snackbar open={error.duplicate} autoHideDuration={2000}>
+        <Alert severity="warning">
+          Conversation of this user already existed
+        </Alert>
+      </Snackbar>
+      <Snackbar open={error.sameId} autoHideDuration={2000}>
+        <Alert severity="warning">
+          Can't talk to yourself, feature not supported
+        </Alert>
+      </Snackbar>
       <form onSubmit={handleSubmit}>
         <TextField
           onChange={(e) => setState(e.target.value)}
           variant="outlined"
           value={state}
-          helperText={error}
           fullWidth
         />
       </form>

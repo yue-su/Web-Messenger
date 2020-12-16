@@ -25,6 +25,7 @@ module.exports = function (io) {
               username: req.body.receiverId,
             },
           ])
+          .catch((err) => res.status(500).json({ message: "duplicate" }))
           .then((conversations) => {
             res.status(200).json(conversations);
           })
