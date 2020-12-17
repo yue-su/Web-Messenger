@@ -49,11 +49,13 @@ const SearchBar = () => {
     if (currentChatReceiverId === user.userId) {
       setError({ ...error, sameId: true });
     } else {
+      const users = [user.userId, currentChatReceiverId].sort().join("to");
+      console.log(users);
       axiosWithAuth()
         .post(`/conversations`, {
           senderId: user.userId,
           receiverId: currentChatReceiverId,
-          users: `${user.userID},${currentChatReceiverId}`,
+          users: users,
         })
         .then((res) => {
           createNewConversation(res.data[0]);
