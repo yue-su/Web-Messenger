@@ -68,7 +68,7 @@ const UsersProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    socket = io("http://192.168.1.11:3001", {
+    socket = io("https://messenger-web-socket.herokuapp.com", {
       auth: {
         token: token,
       },
