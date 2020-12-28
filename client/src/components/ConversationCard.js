@@ -24,7 +24,7 @@ const ConversationCard = ({ conversationId }) => {
   const [userId, setUserId] = useState("");
   const [lastMessage, setLastMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const { passMessages, incomingMsg, conversations } = useContext(userContext);
+  const { passMessages, incomingMsg } = useContext(userContext);
 
   /**
    * get the receiver's information including avatar, username and id.
@@ -40,7 +40,7 @@ const ConversationCard = ({ conversationId }) => {
           setUserId(id);
         }
       });
-  }, [conversationId, conversations]);
+  }, [conversationId]);
 
   /**
    * Get all the messages and render the last one on the card

@@ -97,15 +97,6 @@ const UsersProvider = ({ children }) => {
       }
     });
 
-    /**
-     * the getConversation event is checking if another user started a new conversation with the current user
-     */
-    socket.on("sendConversation", (conversation) => {
-      if (!conversations.find((item) => item.id === conversation.id)) {
-        setConversations((conversations) => [conversation, ...conversations]);
-      }
-    });
-
     return online;
   }, [user]);
 
