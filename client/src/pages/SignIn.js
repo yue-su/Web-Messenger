@@ -96,12 +96,18 @@ const SignIn = () => {
               label="Password"
               required
             />
-            <Box alignSelf="center">
+            <Box width='100%' alignSelf="center" display="flex" alignItems="center" justifyContent='space-between'>
               <StyledButton
                 handler={handleSubmit}
                 text="Login"
                 textColor="#fff"
                 color="primary"
+              />
+              <Typography>or</Typography>
+              <StyledButton
+                text="Login with Google"
+                textColor="fff"
+                color="secondary"
               />
             </Box>
           </Box>

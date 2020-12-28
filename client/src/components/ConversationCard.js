@@ -23,6 +23,7 @@ const ConversationCard = ({ conversationId }) => {
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState("");
   const [lastMessage, setLastMessage] = useState("");
+  // eslint-disable-next-line
   const [messages, setMessages] = useState([]);
   const { passMessages, incomingMsg } = useContext(userContext);
 

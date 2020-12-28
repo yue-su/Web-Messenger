@@ -140,6 +140,17 @@ const UsersProvider = ({ children }) => {
       });
   }
 
+  function loginWithGoogle(history) {
+    axiosWithAuth()
+      .post("/users/loginWithGoogle")
+      .then((res) => {
+        localStorage.setItem("token", res.data.token)
+        setUser(res.data.data)
+
+         history.push("/chatroom");
+      })
+  }
+
   function register(state, history) {
     if (state.username && state.password && state.email) {
       axiosWithAuth()
