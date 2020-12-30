@@ -41,6 +41,9 @@ const SignIn = () => {
     setState(initialState);
   };
 
+  const handleGoogleAuth = (e) => {
+    window.location.href = "http://localhost:3001/auth/google";
+  };
   return (
     <Grid container className={classes.container}>
       <SideBar />
@@ -110,7 +113,12 @@ const SignIn = () => {
                 color="primary"
               />
               <Typography>or</Typography>
-              <Link href="http://localhost:3001/auth/google">Google +</Link>
+              <StyledButton
+                handler={handleGoogleAuth}
+                text="Google +"
+                textColor="#DB4437"
+                color="secondary"
+              />
             </Box>
           </Box>
         </Grid>
