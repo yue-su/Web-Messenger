@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import queryString from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
-import { userContext } from "./UsersProvider";
+import { userContext } from "../providers/UsersProvider";
 
 const LoginSuccess = () => {
   const location = useLocation();
@@ -11,7 +11,6 @@ const LoginSuccess = () => {
 
   useEffect(() => {
     const parsed = queryString.parse(location.search);
-    console.log(parsed);
     loginWithGoogle(parsed, history);
   }, [history, location.search, loginWithGoogle]);
 

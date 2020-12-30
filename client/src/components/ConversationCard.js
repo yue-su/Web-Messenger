@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Avatar, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
-import { userContext } from "../pages/UsersProvider";
+import { userContext } from "../providers/UsersProvider";
 
 const useStyles = makeStyles(() => ({
   card: {

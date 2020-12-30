@@ -11,7 +11,7 @@ import SideBar from "../components/SideBar";
 import StyledButton from "../components/StyledButton";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { userContext } from "./UsersProvider";
+import { userContext } from "../providers/UsersProvider";
 import Alert from "../components/Alert";
 
 const useStyles = makeStyles(() => ({

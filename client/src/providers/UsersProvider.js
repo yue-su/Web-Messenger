@@ -68,7 +68,7 @@ const UsersProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    socket = io(process.env.REACT_APP_SOCKET, {
+    socket = io(process.env.REACT_APP_BACKEND, {
       auth: {
         token: token,
       },
@@ -151,7 +151,6 @@ const UsersProvider = ({ children }) => {
       username: user.username,
       photoURL: user.photoURL,
     };
-    console.log(userInfo);
     setUser(userInfo);
     localStorage.setItem("token", user.token);
     history.push("/chatroom");

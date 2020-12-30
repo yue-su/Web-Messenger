@@ -6,7 +6,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import PrivateRoute from "./components/PrivateRoute";
 import Chatroom from "./pages/Chatroom";
-import UsersProvider from "./pages/UsersProvider";
+import UsersProvider from "./providers/UsersProvider";
 import LoginSuccess from "./pages/LoginSuccess";
 
 function App() {

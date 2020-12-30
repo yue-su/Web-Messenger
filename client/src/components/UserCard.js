@@ -1,6 +1,6 @@
 import { Avatar, Grid, Typography } from "@material-ui/core";
 import React, { useContext } from "react";
-import { userContext } from "../pages/UsersProvider";
+import { userContext } from "../providers/UsersProvider";
 import MoreHoriz from "@material-ui/icons/MoreHoriz";
 import { makeStyles } from "@material-ui/core/styles";
 

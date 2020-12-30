@@ -28,7 +28,7 @@ router.get(
       email: req.user.email,
       photoURL: req.user.photoURL,
     });
-    res.redirect("http://localhost:3000/login?" + query);
+    res.redirect(process.env.CLIENT_REDIRECT + query);
   }
 );
 

@@ -16,8 +16,6 @@ passport.use(
       callbackURL: process.env.GOOGLE_CALLBACK,
     },
     function (token, tokenSecret, profile, done) {
-      console.log(token);
-      console.log(profile);
       user
         .findOne({
           where: {
@@ -26,7 +24,6 @@ passport.use(
         })
         .then((currentUser) => {
           if (currentUser) {
-            console.log("user is", currentUser);
             done(null, currentUser);
           } else {
             const newUser = {
@@ -36,7 +33,6 @@ passport.use(
               photoURL: profile.photos[0].value,
             };
             user.create(newUser).then((createdUser) => {
-              console.log("new user is", createdUser);
               done(null, createdUser);
             });
           }

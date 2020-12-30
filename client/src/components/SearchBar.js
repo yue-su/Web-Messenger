@@ -8,7 +8,7 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
-import { userContext } from "../pages/UsersProvider";
+import { userContext } from "../providers/UsersProvider";
 import Alert from "./Alert";
 
 const useStyles = makeStyles(() => ({
