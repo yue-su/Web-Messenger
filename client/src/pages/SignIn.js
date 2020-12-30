@@ -26,7 +26,7 @@ const SignIn = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const { login, errors } = useContext(userContext);
+  const { login, errors, loginWithGoogle } = useContext(userContext);
   const [state, setState] = useState(initialState);
 
   const handleChange = (e) => {
@@ -39,6 +39,11 @@ const SignIn = () => {
     e.preventDefault();
     login(state, history);
     setState(initialState);
+  };
+
+  const handleSubmitGoogleLogin = (e) => {
+    e.preventDefault();
+    loginWithGoogle(history);
   };
 
   return (
@@ -96,7 +101,13 @@ const SignIn = () => {
               label="Password"
               required
             />
-            <Box width='100%' alignSelf="center" display="flex" alignItems="center" justifyContent='space-between'>
+            <Box
+              width="100%"
+              alignSelf="center"
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
               <StyledButton
                 handler={handleSubmit}
                 text="Login"
@@ -105,10 +116,12 @@ const SignIn = () => {
               />
               <Typography>or</Typography>
               <StyledButton
+                handler={handleSubmitGoogleLogin}
                 text="Login with Google"
                 textColor="fff"
                 color="secondary"
               />
+              <Link href="http://localhost:3001/auth/google">Google +</Link>
             </Box>
           </Box>
         </Grid>

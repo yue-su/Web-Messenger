@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext, useRef } from "react";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 import { getRandomAvatar } from "../utils/getRandomAvatar";
 import io from "socket.io-client";
+import Axios from "axios";
 
 let socket;
 
@@ -68,7 +69,7 @@ const UsersProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    socket = io("https://messenger-web-socket.herokuapp.com", {
+    socket = io(process.env.REACT_APP_SOCKET, {
       auth: {
         token: token,
       },
@@ -103,7 +104,7 @@ const UsersProvider = ({ children }) => {
   useEffect(() => {
     if (user.userId) {
       axiosWithAuth()
-        .get(`/conversations/user/${user.userId}`)
+        .get(`/api/conversations/user/${user.userId}`)
         .then((res) => {
           setConversations(res.data);
         })
@@ -119,7 +120,7 @@ const UsersProvider = ({ children }) => {
 
   function login(state, history) {
     axiosWithAuth()
-      .post("/users/login", state)
+      .post("/api/users/login", state)
       .then((res) => {
         localStorage.setItem("token", res.data.token);
         setUser(res.data.data);
@@ -141,20 +142,18 @@ const UsersProvider = ({ children }) => {
   }
 
   function loginWithGoogle(history) {
-    axiosWithAuth()
-      .post("/users/loginWithGoogle")
-      .then((res) => {
-        localStorage.setItem("token", res.data.token)
-        setUser(res.data.data)
+    Axios.get("http://localhost:3001/auth/google").then((res) => {
+      localStorage.setItem("token", res.data.token);
+      setUser(res.data.data);
 
-         history.push("/chatroom");
-      })
+      history.push("/chatroom");
+    });
   }
 
   function register(state, history) {
     if (state.username && state.password && state.email) {
       axiosWithAuth()
-        .post("/users/register", { ...state, photoURL: getRandomAvatar() })
+        .post("/api/users/register", { ...state, photoURL: getRandomAvatar() })
         .then((res) => {
           localStorage.setItem("token", res.data.token);
 
@@ -164,7 +163,7 @@ const UsersProvider = ({ children }) => {
             photoURL: res.data.data.photoURL,
           });
           axiosWithAuth()
-            .get(`/conversations/user/${res.data.data.id}`)
+            .get(`/api/conversations/user/${res.data.data.id}`)
             .then((res) => {
               setConversations(res.data);
             })
@@ -222,6 +221,7 @@ const UsersProvider = ({ children }) => {
         passMessages,
         renderMessage,
         createNewConversation,
+        loginWithGoogle,
       }}
     >
       {children}

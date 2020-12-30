@@ -39,6 +39,10 @@ const usersRouter = require("./routes/users");
 const conversationsRouter = require("./routes/conversations")(io);
 const messageRouter = require("./routes/messages")(io);
 
+const passport = require("passport");
+require("./config/passport-config");
+const authRoutes = require("./routes/auth");
+
 app.use(cors());
 app.use(logger("dev"));
 app.use(json());
@@ -46,11 +50,14 @@ app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(join(__dirname, "public")));
 
+app.use(passport.initialize());
+
 app.use("/", indexRouter);
 app.use("/ping", pingRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/conversations", conversationsRouter);
 app.use("/api/messages", messageRouter);
+app.use("/auth", authRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
