@@ -45,6 +45,7 @@ const ConversationWindow = () => {
       axiosWithAuth()
         .post(`/api/messages`, data)
         .then((message) => {
+          console.log(message.data);
           renderMessage(message.data);
         });
 

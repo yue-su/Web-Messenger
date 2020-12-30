@@ -2,7 +2,6 @@ import React, { useState, useEffect, createContext, useRef } from "react";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 import { getRandomAvatar } from "../utils/getRandomAvatar";
 import io from "socket.io-client";
-import Axios from "axios";
 
 let socket;
 
@@ -147,10 +146,12 @@ const UsersProvider = ({ children }) => {
 
   function loginWithGoogle(user, history) {
     const userInfo = {
-      userId: user.userId,
+      //here we need to conver the id to integer by adding +
+      userId: +user.userId,
       username: user.username,
       photoURL: user.photoURL,
     };
+    console.log(userInfo);
     setUser(userInfo);
     localStorage.setItem("token", user.token);
     history.push("/chatroom");

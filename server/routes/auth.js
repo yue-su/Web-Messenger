@@ -3,28 +3,6 @@ const passport = require("passport");
 const { makeJwt } = require("../utils/makeJwt");
 const querystring = require("querystring");
 
-// auth login
-router.get("/login", (req, res) => {
-  res.render("login", { user: req.user });
-});
-
-// auth logout
-router.get("/logout", (req, res) => {
-  // handle with passport
-  res.send("logging out");
-});
-
-router.get("/login/success", (req, res) => {
-  if (req.user) {
-    res.json({
-      success: true,
-      message: "user has successfully authenticated",
-      user: req.user,
-      token: req.token,
-    });
-  }
-});
-
 // auth with google+
 router.get(
   "/google",
@@ -51,7 +29,6 @@ router.get(
       photoURL: req.user.photoURL,
     });
     res.redirect("http://localhost:3000/login?" + query);
-    //res.status(201).json({ data: req.user, token });
   }
 );
 
