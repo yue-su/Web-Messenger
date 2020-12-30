@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import MoreHoriz from "@material-ui/icons/MoreHoriz";
 import MsgReceived from "./MsgReceived";
 import MsgSent from "./MsgSent";
-import { userContext } from "../providers/UsersProvider";
+import { userContext } from "../pages/UsersProvider";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 
 const useStyles = makeStyles(() => ({
@@ -43,7 +43,7 @@ const ConversationWindow = () => {
         currentChatReceiverId: currentChatReceiver.userId,
       };
       axiosWithAuth()
-        .post(`/messages`, data)
+        .post(`/api/messages`, data)
         .then((message) => {
           renderMessage(message.data);
         });

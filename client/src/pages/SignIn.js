@@ -11,7 +11,7 @@ import SideBar from "../components/SideBar";
 import StyledButton from "../components/StyledButton";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { userContext } from "../providers/UsersProvider";
+import { userContext } from "./UsersProvider";
 import Alert from "../components/Alert";
 
 const useStyles = makeStyles(() => ({
@@ -26,7 +26,7 @@ const SignIn = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const { login, errors, loginWithGoogle } = useContext(userContext);
+  const { login, errors } = useContext(userContext);
   const [state, setState] = useState(initialState);
 
   const handleChange = (e) => {
@@ -39,11 +39,6 @@ const SignIn = () => {
     e.preventDefault();
     login(state, history);
     setState(initialState);
-  };
-
-  const handleSubmitGoogleLogin = (e) => {
-    e.preventDefault();
-    loginWithGoogle(history);
   };
 
   return (
@@ -115,12 +110,6 @@ const SignIn = () => {
                 color="primary"
               />
               <Typography>or</Typography>
-              <StyledButton
-                handler={handleSubmitGoogleLogin}
-                text="Login with Google"
-                textColor="fff"
-                color="secondary"
-              />
               <Link href="http://localhost:3001/auth/google">Google +</Link>
             </Box>
           </Box>

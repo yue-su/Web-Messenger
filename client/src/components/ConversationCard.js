@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Avatar, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
-import { userContext } from "../providers/UsersProvider";
+import { userContext } from "../pages/UsersProvider";
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -32,7 +32,7 @@ const ConversationCard = ({ conversationId }) => {
    */
   useEffect(() => {
     axiosWithAuth()
-      .get(`/conversations/${conversationId}`)
+      .get(`/api/conversations/${conversationId}`)
       .then((conversations) => {
         if (conversations.data[0]) {
           const { photoURL, username, id } = conversations.data[0].user;
@@ -48,7 +48,7 @@ const ConversationCard = ({ conversationId }) => {
    */
   useEffect(() => {
     axiosWithAuth()
-      .get(`/messages/conversation/${conversationId}`)
+      .get(`/api/messages/conversation/${conversationId}`)
       .then((messages) => {
         if (messages.data[0]) {
           setLastMessage(messages.data[0].content);
@@ -74,7 +74,7 @@ const ConversationCard = ({ conversationId }) => {
    */
   const handleClick = () => {
     axiosWithAuth()
-      .get(`/messages/conversation/${conversationId}`)
+      .get(`/api/messages/conversation/${conversationId}`)
       .then((messages) => {
         setMessages(messages.data);
         passMessages(messages.data, username, conversationId, userId);

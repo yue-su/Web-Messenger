@@ -17,6 +17,30 @@ passport.use(
     },
     function (token, tokenSecret, profile, done) {
       console.log(token);
+      console.log(profile);
+      user
+        .findOne({
+          where: {
+            email: profile.emails[0].value,
+          },
+        })
+        .then((currentUser) => {
+          if (currentUser) {
+            console.log("user is", currentUser);
+            done(null, currentUser);
+          } else {
+            const newUser = {
+              username: profile.displayName,
+              email: profile.emails[0].value,
+              password: "NA",
+              photoURL: profile.photos[0].value,
+            };
+            user.create(newUser).then((createdUser) => {
+              console.log("new user is", createdUser);
+              done(null, createdUser);
+            });
+          }
+        });
     }
   )
 );

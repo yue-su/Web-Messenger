@@ -98,6 +98,10 @@ const UsersProvider = ({ children }) => {
       }
     });
 
+    socket.on("user", (user) => {
+      console.log(user);
+    });
+
     return online;
   }, [user]);
 
@@ -141,13 +145,15 @@ const UsersProvider = ({ children }) => {
       });
   }
 
-  function loginWithGoogle(history) {
-    Axios.get("http://localhost:3001/auth/google").then((res) => {
-      localStorage.setItem("token", res.data.token);
-      setUser(res.data.data);
-
-      history.push("/chatroom");
-    });
+  function loginWithGoogle(user, history) {
+    const userInfo = {
+      userId: user.userId,
+      username: user.username,
+      photoURL: user.photoURL,
+    };
+    setUser(userInfo);
+    localStorage.setItem("token", user.token);
+    history.push("/chatroom");
   }
 
   function register(state, history) {
