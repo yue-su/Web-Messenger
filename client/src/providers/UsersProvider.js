@@ -68,7 +68,7 @@ const UsersProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    socket = io("https://messenger-web-socket.herokuapp.com", {
+    socket = io(process.env.REACT_APP_BACKEND, {
       auth: {
         token: token,
       },
@@ -97,13 +97,17 @@ const UsersProvider = ({ children }) => {
       }
     });
 
+    socket.on("user", (user) => {
+      console.log(user);
+    });
+
     return online;
   }, [user]);
 
   useEffect(() => {
     if (user.userId) {
       axiosWithAuth()
-        .get(`/conversations/user/${user.userId}`)
+        .get(`/api/conversations/user/${user.userId}`)
         .then((res) => {
           setConversations(res.data);
         })
@@ -119,7 +123,7 @@ const UsersProvider = ({ children }) => {
 
   function login(state, history) {
     axiosWithAuth()
-      .post("/users/login", state)
+      .post("/api/users/login", state)
       .then((res) => {
         localStorage.setItem("token", res.data.token);
         setUser(res.data.data);
@@ -140,10 +144,22 @@ const UsersProvider = ({ children }) => {
       });
   }
 
+  function loginWithGoogle(user, history) {
+    const userInfo = {
+      //here we need to conver the id to integer by adding +
+      userId: +user.userId,
+      username: user.username,
+      photoURL: user.photoURL,
+    };
+    setUser(userInfo);
+    localStorage.setItem("token", user.token);
+    history.push("/chatroom");
+  }
+
   function register(state, history) {
     if (state.username && state.password && state.email) {
       axiosWithAuth()
-        .post("/users/register", { ...state, photoURL: getRandomAvatar() })
+        .post("/api/users/register", { ...state, photoURL: getRandomAvatar() })
         .then((res) => {
           localStorage.setItem("token", res.data.token);
 
@@ -153,7 +169,7 @@ const UsersProvider = ({ children }) => {
             photoURL: res.data.data.photoURL,
           });
           axiosWithAuth()
-            .get(`/conversations/user/${res.data.data.id}`)
+            .get(`/api/conversations/user/${res.data.data.id}`)
             .then((res) => {
               setConversations(res.data);
             })
@@ -211,6 +227,7 @@ const UsersProvider = ({ children }) => {
         passMessages,
         renderMessage,
         createNewConversation,
+        loginWithGoogle,
       }}
     >
       {children}

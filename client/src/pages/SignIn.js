@@ -41,6 +41,9 @@ const SignIn = () => {
     setState(initialState);
   };
 
+  const handleGoogleAuth = (e) => {
+    window.location.href = "http://localhost:3001/auth/google";
+  };
   return (
     <Grid container className={classes.container}>
       <SideBar />
@@ -96,12 +99,25 @@ const SignIn = () => {
               label="Password"
               required
             />
-            <Box alignSelf="center">
+            <Box
+              width="100%"
+              alignSelf="center"
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
               <StyledButton
                 handler={handleSubmit}
                 text="Login"
                 textColor="#fff"
                 color="primary"
+              />
+              <Typography>or</Typography>
+              <StyledButton
+                handler={handleGoogleAuth}
+                text="Google +"
+                textColor="#DB4437"
+                color="secondary"
               />
             </Box>
           </Box>

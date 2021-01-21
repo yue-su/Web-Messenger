@@ -52,7 +52,7 @@ const SearchBar = () => {
       const users = [user.userId, currentChatReceiverId].sort().join("to");
       console.log(users);
       axiosWithAuth()
-        .post(`/conversations`, {
+        .post(`/api/conversations`, {
           senderId: user.userId,
           receiverId: currentChatReceiverId,
           users: users,
@@ -70,7 +70,7 @@ const SearchBar = () => {
 
   useEffect(() => {
     axiosWithAuth()
-      .get(`/users`)
+      .get(`/api/users`)
       .then((users) => {
         if (state === "") {
           setSearchResult([]);

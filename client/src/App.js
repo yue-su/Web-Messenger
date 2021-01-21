@@ -7,6 +7,7 @@ import SignUp from "./pages/SignUp";
 import PrivateRoute from "./components/PrivateRoute";
 import Chatroom from "./pages/Chatroom";
 import UsersProvider from "./providers/UsersProvider";
+import LoginSuccess from "./pages/LoginSuccess";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Redirect exact from="/" to="/sign-in" />
             <Route path="/sign-in" component={SignIn} />
             <Route path="/sign-up" component={SignUp} />
+            <Route path="/login" component={LoginSuccess} />
             <PrivateRoute path="/chatroom" component={Chatroom} />
           </Switch>
         </BrowserRouter>

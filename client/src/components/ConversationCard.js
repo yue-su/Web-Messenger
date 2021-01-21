@@ -23,6 +23,7 @@ const ConversationCard = ({ conversationId }) => {
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState("");
   const [lastMessage, setLastMessage] = useState("");
+  // eslint-disable-next-line
   const [messages, setMessages] = useState([]);
   const { passMessages, incomingMsg } = useContext(userContext);
 
@@ -31,7 +32,7 @@ const ConversationCard = ({ conversationId }) => {
    */
   useEffect(() => {
     axiosWithAuth()
-      .get(`/conversations/${conversationId}`)
+      .get(`/api/conversations/${conversationId}`)
       .then((conversations) => {
         if (conversations.data[0]) {
           const { photoURL, username, id } = conversations.data[0].user;
@@ -47,7 +48,7 @@ const ConversationCard = ({ conversationId }) => {
    */
   useEffect(() => {
     axiosWithAuth()
-      .get(`/messages/conversation/${conversationId}`)
+      .get(`/api/messages/conversation/${conversationId}`)
       .then((messages) => {
         if (messages.data[0]) {
           setLastMessage(messages.data[0].content);
@@ -73,7 +74,7 @@ const ConversationCard = ({ conversationId }) => {
    */
   const handleClick = () => {
     axiosWithAuth()
-      .get(`/messages/conversation/${conversationId}`)
+      .get(`/api/messages/conversation/${conversationId}`)
       .then((messages) => {
         setMessages(messages.data);
         passMessages(messages.data, username, conversationId, userId);

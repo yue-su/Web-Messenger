@@ -43,7 +43,7 @@ const ConversationWindow = () => {
         currentChatReceiverId: currentChatReceiver.userId,
       };
       axiosWithAuth()
-        .post(`/messages`, data)
+        .post(`/api/messages`, data)
         .then((message) => {
           renderMessage(message.data);
         });

@@ -1,8 +1,9 @@
-import { Avatar, Grid, Typography } from "@material-ui/core";
+import { Avatar, Button, Grid, Typography } from "@material-ui/core";
 import React, { useContext } from "react";
 import { userContext } from "../providers/UsersProvider";
 import MoreHoriz from "@material-ui/icons/MoreHoriz";
 import { makeStyles } from "@material-ui/core/styles";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -21,6 +22,12 @@ const UserCard = () => {
   const classes = useStyles();
   const { user } = useContext(userContext);
   const { username, photoURL } = user;
+  const history = useHistory();
+
+  const handleClick = (e) => {
+    localStorage.clear();
+    history.push("/");
+  };
 
   return (
     <Grid
@@ -30,14 +37,16 @@ const UserCard = () => {
       justify="space-between"
       className={classes.container}
     >
-      <Grid item container alignItems="center" xs={10}>
+      <Grid item container alignItems="center" xs={8}>
         <Avatar src={photoURL} alt={username} className={classes.avatar} />
         <Typography variant="h4" className={classes.name}>
           {username}
         </Typography>
       </Grid>
-      <Grid item xs={2}>
-        <MoreHoriz />
+      <Grid item xs={4}>
+        <Button onClick={handleClick} variant="contained">
+          Logout
+        </Button>
       </Grid>
     </Grid>
   );
