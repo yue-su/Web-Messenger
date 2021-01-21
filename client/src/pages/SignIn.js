@@ -42,7 +42,7 @@ const SignIn = () => {
   };
 
   const handleGoogleAuth = (e) => {
-    window.location.href = "http://localhost:3001/auth/google";
+    window.location.href = `${process.env.REACT_APP_BACKEND}/auth/google`;
   };
   return (
     <Grid container className={classes.container}>
