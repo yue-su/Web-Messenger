@@ -1,10 +1,13 @@
 # A Web-based Messenger App
 
+Try the live demo -> https://messenger-web-front.herokuapp.com
+
 ### Features
 
 - Real-time messaging
 - Offline message
 - User login/register
+- login with google+
 
 ### Stack
 
@@ -23,6 +26,11 @@
 - Socket.io
 - Axios
 - React-router-dom
+
+### Snapshot
+
+![Image of demo-1](images/demo-1.png)
+![Image of demo-2](images/demo-2.png)
 
 ---
 
