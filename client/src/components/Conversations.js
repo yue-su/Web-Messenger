@@ -21,9 +21,13 @@ const Conversations = () => {
   const { conversations } = useContext(userContext);
   return (
     <Grid item container spacing={2} className={classes.messageWindow}>
-      {conversations.map((conversation) => (
-        <ConversationCard key={conversation.conversationId} {...conversation} />
-      ))}
+      {conversations &&
+        conversations.map((conversation) => (
+          <ConversationCard
+            key={conversation.conversationId}
+            {...conversation}
+          />
+        ))}
     </Grid>
   );
 };

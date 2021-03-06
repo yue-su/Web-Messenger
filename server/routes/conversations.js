@@ -3,7 +3,6 @@ const router = require("express").Router();
 const { restricted } = require("../middlewares/auth");
 const { isCurrentUser } = require("../middlewares/isCurrentUser");
 const { Op } = require("sequelize");
-const { userSocketIdMap } = require("../utils/userSocketIdMap");
 
 const { conversation, userToConversation, user } = models;
 

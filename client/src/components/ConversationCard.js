@@ -31,30 +31,29 @@ const ConversationCard = ({ conversationId }) => {
    * get the receiver's information including avatar, username and id.
    */
   useEffect(() => {
-    axiosWithAuth()
-      .get(`/api/conversations/${conversationId}`)
-      .then((conversations) => {
+    (async () => {
+      try {
+        const conversations = await axiosWithAuth().get(
+          `/api/conversations/${conversationId}`
+        );
         if (conversations.data[0]) {
           const { photoURL, username, id } = conversations.data[0].user;
           setAvatar(photoURL);
           setUsername(username);
           setUserId(id);
         }
-      });
-  }, [conversationId]);
 
-  /**
-   * Get all the messages and render the last one on the card
-   */
-  useEffect(() => {
-    axiosWithAuth()
-      .get(`/api/messages/conversation/${conversationId}`)
-      .then((messages) => {
+        const messages = await axiosWithAuth().get(
+          `/api/messages/conversation/${conversationId}`
+        );
         if (messages.data[0]) {
           setLastMessage(messages.data[0].content);
         }
         setMessages(messages.data);
-      });
+      } catch (error) {
+        console.error(error);
+      }
+    })();
   }, [conversationId]);
 
   /**
@@ -72,16 +71,15 @@ const ConversationCard = ({ conversationId }) => {
    * when the user click the card, it passes the message to the conversationWindow
    * here I called the API again just trying to sync messages from the server
    */
-  const handleClick = () => {
-    axiosWithAuth()
-      .get(`/api/messages/conversation/${conversationId}`)
-      .then((messages) => {
-        setMessages(messages.data);
-        passMessages(messages.data, username, conversationId, userId);
-        if (messages.data[0]) {
-          setLastMessage(messages.data[0].content);
-        }
-      });
+  const handleClick = async () => {
+    const messages = await axiosWithAuth().get(
+      `/api/messages/conversation/${conversationId}`
+    );
+    setMessages(messages.data);
+    passMessages(messages.data, username, conversationId, userId);
+    if (messages.data[0]) {
+      setLastMessage(messages.data[0].content);
+    }
   };
 
   return (
