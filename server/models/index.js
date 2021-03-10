@@ -36,9 +36,13 @@ addAssociations(sequelize);
 syncModels(sequelize);
 
 //test the database connection
-sequelize
-  .authenticate()
-  .then(() => console.log("Postgres Connected!"))
-  .catch((err) => console.error(err));
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Postgres Connected!");
+  } catch (error) {
+    console.error(err);
+  }
+})();
 
 module.exports = sequelize;

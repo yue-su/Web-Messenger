@@ -5,12 +5,6 @@ import io from "socket.io-client";
 
 let socket;
 
-export const userContext = createContext();
-
-/**
- * setting up the initial root states for the app
- */
-
 const currentChatReceiverInit = {
   userId: "",
   username: "",
@@ -33,6 +27,8 @@ const errorsInit = {
   register: false,
   chatInput: false,
 };
+
+export const userContext = createContext();
 
 /**
  * The UsersProveder holds the root states and initalizes them with uselocalstorage
@@ -105,14 +101,18 @@ const UsersProvider = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
-    if (user.userId) {
-      axiosWithAuth()
-        .get(`/api/conversations/user/${user.userId}`)
-        .then((res) => {
-          setConversations(res.data);
-        })
-        .catch((error) => console.error(error));
-    }
+    (async () => {
+      try {
+        if (user.userId) {
+          const { data } = await axiosWithAuth().get(
+            `/api/conversations/user/${user.userId}`
+          );
+          setConversations(data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
   }, [user]);
 
   /**
@@ -121,27 +121,24 @@ const UsersProvider = ({ children }) => {
    * needs to do a refactor for better structrue
    */
 
-  function login(state, history) {
-    axiosWithAuth()
-      .post("/api/users/login", state)
-      .then((res) => {
-        localStorage.setItem("token", res.data.token);
-        setUser(res.data.data);
-
-        history.push(`/chatroom`);
+  async function login(state, history) {
+    try {
+      const { data } = await axiosWithAuth().post("/api/users/login", state);
+      localStorage.setItem("token", data.token);
+      setUser(data.data);
+      history.push("/chatroom");
+      setErrors({
+        ...errors,
+        login: false,
+      });
+    } catch (error) {
+      if (error) {
         setErrors({
           ...errors,
-          login: false,
+          login: true,
         });
-      })
-      .catch((error) => {
-        if (error) {
-          setErrors({
-            ...errors,
-            login: true,
-          });
-        }
-      });
+      }
+    }
   }
 
   function loginWithGoogle(user, history) {
@@ -156,27 +153,31 @@ const UsersProvider = ({ children }) => {
     history.push("/chatroom");
   }
 
-  function register(state, history) {
-    if (state.username && state.password && state.email) {
-      axiosWithAuth()
-        .post("/api/users/register", { ...state, photoURL: getRandomAvatar() })
-        .then((res) => {
-          localStorage.setItem("token", res.data.token);
-
-          setUser({
-            userId: res.data.data.id,
-            username: res.data.data.username,
-            photoURL: res.data.data.photoURL,
-          });
-          axiosWithAuth()
-            .get(`/api/conversations/user/${res.data.data.id}`)
-            .then((res) => {
-              setConversations(res.data);
-            })
-            .catch((error) => console.error(error));
-          history.push(`/chatroom`);
+  async function register(state, history) {
+    try {
+      if (state.username && state.password && state.email) {
+        const { data } = await axiosWithAuth().post("/api/users/register", {
+          ...state,
+          photoURL: getRandomAvatar(),
         });
-    } else {
+
+        localStorage.setItem("token", data.token);
+
+        setUser({
+          userId: data.data.id,
+          username: data.data.username,
+          photoURL: data.data.photoURL,
+        });
+
+        const { convers } = await axiosWithAuth().get(
+          `/api/conversations/user/${data.data.id}`
+        );
+
+        setConversations(convers);
+
+        history.push("/chatroom");
+      }
+    } catch (error) {
       setErrors({
         ...errors,
         register: true,

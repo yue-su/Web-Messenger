@@ -1,30 +1,15 @@
-function syncModels(sequelize) {
+const syncModels = async (sequelize) => {
   const { user, conversation, message, userToConversation } = sequelize.models;
 
-  user
-    .sync()
-    .then(() => {
-      console.log("user synced");
-      conversation
-        .sync()
-        .then(() => {
-          console.log("conversation synced");
-          userToConversation
-            .sync()
-            .then(() => {
-              console.log("userToConversation synced");
-              message
-                .sync()
-                .then(() => {
-                  console.log("message synced");
-                })
-                .catch((err) => console.error(err));
-            })
-            .catch((err) => console.error(err));
-        })
-        .catch((err) => console.error(err));
-    })
-    .catch((err) => console.error(err));
-}
+  try {
+    await user.sync();
+    await conversation.sync();
+    await userToConversation.sync();
+    await message.sync();
+    console.log("synced");
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 module.exports = { syncModels };
